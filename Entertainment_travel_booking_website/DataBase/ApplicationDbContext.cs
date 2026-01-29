@@ -1,10 +1,19 @@
 ﻿using Entertainment_travel_booking_website.DataBase.Entitytypeconficration;
+using Entertainment_travel_booking_website.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entertainment_travel_booking_website.DataBase
 {
     public class ApplicationDbContext : DbContext
     {
+        public DbSet<Trip> trips { get; set; }
+        public DbSet<AdditianActivities> additianActivites { get; set; }
+        public DbSet<TripAdditianActivities> tripAdditianActivities { get; set; }
+        public DbSet<ActivitiesSupImg> activitiesSupImgs { get; set; }
+        public DbSet<Hotel> hotels { get; set; }
+        public DbSet<HotelSupImg> hotelSupImgs { get; set; }
+        public DbSet<Room> rooms { get; set; }
+        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);

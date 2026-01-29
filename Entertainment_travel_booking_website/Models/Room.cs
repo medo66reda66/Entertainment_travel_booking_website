@@ -11,7 +11,7 @@
         public int ID { get; set; }
         public string? Description { get; set; } = string.Empty;
         public RoomType Type { get; set; }
-        public string locationInHotel { get; set; }
+        public string locationInHotel { get; set; } = string.Empty;
         public bool Availability { get; set; }
 
     }

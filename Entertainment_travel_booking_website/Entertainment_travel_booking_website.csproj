@@ -15,4 +15,11 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Controllers\" />
+    <Folder Include="Areas\Chat\Controllers\" />
+    <Folder Include="Areas\Home\Controllers\" />
+    <Folder Include="Areas\Identity\Controllers\" />
+  </ItemGroup>
+
 </Project>

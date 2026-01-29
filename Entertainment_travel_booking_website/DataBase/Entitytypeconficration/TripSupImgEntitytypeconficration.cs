@@ -12,3 +12,4 @@ namespace Entertainment_travel_booking_website.DataBase.Entitytypeconficration
         }
     }
 }
+ 
