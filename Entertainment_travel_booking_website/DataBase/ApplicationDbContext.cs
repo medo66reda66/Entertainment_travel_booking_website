@@ -6,6 +6,9 @@ namespace Entertainment_travel_booking_website.DataBase
 {
     public class ApplicationDbContext : DbContext
     {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
         public DbSet<Trip> trips { get; set; }
         public DbSet<AdditianActivities> additianActivites { get; set; }
         public DbSet<TripAdditianActivities> tripAdditianActivities { get; set; }
