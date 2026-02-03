@@ -17,12 +17,12 @@ namespace Entertainment_travel_booking_website.DataBase
         public DbSet<HotelSupImg> hotelSupImgs { get; set; }
         public DbSet<Room> rooms { get; set; }
         
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseSqlServer("Data Source=.;Initial catalog =Trips; Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");  base.OnConfiguring(optionsBuilder);
-            //optionsBuilder.UseSqlServer("Data Source=(localdb)\\ProjectModels;Initial Catalog=Trips;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    base.OnConfiguring(optionsBuilder);
+        //    optionsBuilder.UseSqlServer("Data Source=.;Initial catalog =Trips; Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");  base.OnConfiguring(optionsBuilder);
+        //    //optionsBuilder.UseSqlServer("Data Source=(localdb)\\ProjectModels;Initial Catalog=Trips;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+        //}
 
         override protected void OnModelCreating(ModelBuilder modelBuilder)
         {

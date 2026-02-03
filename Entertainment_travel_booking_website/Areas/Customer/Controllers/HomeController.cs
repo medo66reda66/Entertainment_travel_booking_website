@@ -10,10 +10,11 @@ namespace Entertainment_travel_booking_website.Areas.Home.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _Context = new();
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ApplicationDbContext _Context ;
+        public HomeController(ILogger<HomeController> logger,ApplicationDbContext context)
         {
             _logger = logger;
+            _Context = context;
         }
         public IActionResult Index(string? destination, DateTime? startDate, DateTime? endDate, decimal? maxPrice, int page = 1)
         {
