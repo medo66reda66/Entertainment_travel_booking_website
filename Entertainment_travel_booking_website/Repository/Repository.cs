@@ -64,11 +64,11 @@ namespace Entertainment_travel_booking_website.Repository
             {
                 await _context.SaveChangesAsync(cancellationToken);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine("eroo" + ex.Message);
             }
-           
+
         }
     }
 }

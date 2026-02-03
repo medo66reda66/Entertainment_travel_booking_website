@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Entertainment_travel_booking_website.Models.Trip>
+
+@{
+    ViewData["Title"] = "Trips";
+}
+
+<h2>Trips</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add New Trip</a>
+</p>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Place</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Price</th>
+            <th>Discounted Price</th>
+            <th>Available Seats</th>
+            <th>Status</th>
+            <th>Main Image</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var trip in Model)
+        {
+            <tr>
+                <td>@trip.Place</td>
+                <td>@trip.StartDate.ToString("yyyy-MM-dd")</td>
+                <td>@trip.EndDate.ToString("yyyy-MM-dd")</td>
+                <td>@trip.Price.ToString("C")</td>
+                <td>@trip.DiscountedPrice?.ToString("C")</td>
+                <td>@trip.AvailableSeats</td>
+                <td>@trip.Status</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(trip.Image))
+                    {
+                        <img src="~/images/trips/@trip.Image" alt="@trip.Place" width="100" />
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@trip.Id" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@trip.Id" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@trip.Id" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
