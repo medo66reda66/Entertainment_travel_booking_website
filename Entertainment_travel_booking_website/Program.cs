@@ -45,7 +45,8 @@ namespace Entertainment_travel_booking_website
             pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
+                pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}")
+                
                 .WithStaticAssets();
 
             app.Run();

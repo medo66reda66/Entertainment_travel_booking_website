@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <Folder Include="Areas\Chat\Controllers\" />
-    <Folder Include="Areas\Home\Controllers\" />
     <Folder Include="Areas\Identity\Controllers\" />
   </ItemGroup>
 
