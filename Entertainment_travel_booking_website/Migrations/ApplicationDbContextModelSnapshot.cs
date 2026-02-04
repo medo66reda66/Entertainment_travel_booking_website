@@ -34,7 +34,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasIndex("TripsId");
 
-                    b.ToTable("AdditianActivitiesTrip");
+                    b.ToTable("AdditianActivitiesTrip", (string)null);
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.ActivitiesSupImg", b =>
@@ -55,7 +55,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasIndex("AdditianActivitiesId");
 
-                    b.ToTable("activitiesSupImgs");
+                    b.ToTable("activitiesSupImgs", (string)null);
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.AdditianActivities", b =>
@@ -81,7 +81,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("additianActivites");
+                    b.ToTable("additianActivites", (string)null);
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.Hotel", b =>
@@ -116,7 +116,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("hotels");
+                    b.ToTable("hotels", (string)null);
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.HotelSupImg", b =>
@@ -134,7 +134,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("hotelSupImgs");
+                    b.ToTable("hotelSupImgs", (string)null);
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.Room", b =>
@@ -165,7 +165,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("rooms");
+                    b.ToTable("rooms", (string)null);
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.Trip", b =>
@@ -213,7 +213,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("trips");
+                    b.ToTable("trips", (string)null);
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.TripAdditianActivities", b =>
@@ -231,7 +231,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasIndex("additianActivitiesId");
 
-                    b.ToTable("tripAdditianActivities");
+                    b.ToTable("tripAdditianActivities", (string)null);
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.TripSupimage", b =>
@@ -249,7 +249,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasIndex("TripId");
 
-                    b.ToTable("TripSupimage");
+                    b.ToTable("TripSupimage", (string)null);
                 });
 
             modelBuilder.Entity("AdditianActivitiesTrip", b =>

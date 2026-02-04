@@ -18,6 +18,8 @@
   <ItemGroup>
     <Folder Include="Areas\Chat\Controllers\" />
     <Folder Include="Areas\Identity\Controllers\" />
+    <Folder Include="wwwroot\images\trip-sup\" />
+    <Folder Include="wwwroot\images\trips\" />
   </ItemGroup>
 
 </Project>

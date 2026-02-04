@@ -1,9 +1,9 @@
 ﻿@using Entertainment_travel_booking_website.modelVM
-@model TripVM
+@model TripCreateVM
 
 @{
     ViewData["Title"] = "Create Trip";
-}
+} 
 
 <h2 class="mb-4">Create New Trip</h2>
 
@@ -76,12 +76,12 @@
     </div>
 
     <!-- Main Image -->
-    <div class="col-md-6">
+     <div class="col-md-6">
         <label asp-for="MainImage" class="form-label">Main Image</label>
         <input asp-for="MainImage" type="file" class="form-control" />
-        <span asp-validation-for="MainImage" class="text-danger"></span>
-    </div>
-
+       
+    </div>  
+  
     <!-- Sub Images -->
     <div class="col-md-6">
         <label asp-for="SupImages" class="form-label">Sub Images</label>
@@ -102,6 +102,7 @@
     </div>
 
 </form>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
