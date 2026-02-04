@@ -1,5 +1,5 @@
 ﻿@using Entertainment_travel_booking_website.modelVM
-@model TripVM
+@model TripEditVM
 
 @{
     ViewData["Title"] = "Edit Trip";
@@ -78,9 +78,20 @@
     </div>
 
     <!-- Main Image -->
-    <div class="col-md-6">
+    @* <div class="col-md-6">
         <label class="form-label">Change Main Image</label>
         <input asp-for="MainImage" type="file" class="form-control" />
+    </div> *@
+    <div class="mb-3">
+        <label for="img" class="form-label">Img</label>
+        <input type="file" class="form-control" asp-for="MainImage" accept="images/*"
+               onchange="previewImage(event)" />
+    </div>
+    <div class="mb-3">
+        <img id="preview"
+             src="~/images/trips/@Model.MainImage"
+             alt="Current Image"
+             style="max-width: 200px; border:1px solid #ccc; padding:5px; border-radius:10px;" />
     </div>
 
     <!-- Sub Images -->
@@ -100,6 +111,22 @@
     </div>
 
 </form>
+<script>
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById("preview");
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result; // الصورة الجديدة
+            }
+
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

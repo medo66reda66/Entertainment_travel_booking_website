@@ -22,7 +22,11 @@ namespace Entertainment_travel_booking_website
                options.UseSqlServer(builder.Configuration.GetConnectionString("default"));
             });
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            builder.Services.AddScoped<ITripRepository, TripRepository>();
+            //builder.Services.AddScoped<ITripRepository, TripRepository>();
+            builder.Services.AddScoped<IRepository<Trip>, Repository<Trip>>();
+            builder.Services.AddScoped<IRepository<TripSupimage>, Repository<TripSupimage>>();
+            builder.Services.AddScoped<TripSupimgIRepository,TripSupImgsRepository>();
+
             builder.Services.AddScoped<TripRepository>();
 
             var app = builder.Build();

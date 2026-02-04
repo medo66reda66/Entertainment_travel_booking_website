@@ -11,16 +11,20 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
     public class TripController : Controller
     {
 
-        private readonly ITripRepository _tripRepository;
+        private readonly IRepository<Trip> _tripRepository;
+        private readonly IRepository<TripSupimage> _tripSupimageRepository;
+        private readonly TripSupimgIRepository _tripSupimgIRepository;
 
-        public TripController(ITripRepository tripRepository)
+        public TripController(IRepository<Trip> tripRepository, IRepository<TripSupimage> tripSupimageRepository, TripSupimgIRepository tripSupimgIRepository)
         {
             _tripRepository = tripRepository;
+            _tripSupimageRepository = tripSupimageRepository;
+            _tripSupimgIRepository = tripSupimgIRepository;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
-            var trips = await _tripRepository.GetAllAsync();
+            var trips = await _tripRepository.GetAsync(tracked:false,cancellationToken:cancellationToken);
             return View(trips);
         }
 
@@ -31,70 +35,86 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(TripVM tripVM)
+        public async Task<IActionResult> Create(TripCreateVM tripcreateVM,CancellationToken cancellationtoken)
         {
             if (!ModelState.IsValid)
-                return View(tripVM);
-
-            string tripsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trips");
-            if (!Directory.Exists(tripsFolder))
-                Directory.CreateDirectory(tripsFolder);
-
-            string supImagesFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trip-sup");
-            if (!Directory.Exists(supImagesFolder))
-                Directory.CreateDirectory(supImagesFolder);
-
-            string mainImageName = Guid.NewGuid() + Path.GetExtension(tripVM.MainImage.FileName);
-            string mainImagePath = Path.Combine(tripsFolder, mainImageName);
-            using (var stream = new FileStream(mainImagePath, FileMode.Create))
-            {
-                await tripVM.MainImage.CopyToAsync(stream);
-            }
-
-            var trip = new Trip
-            {
-                Place = tripVM.Place,
-                StartDate = tripVM.StartDate,
-                EndDate = tripVM.EndDate,
-                Description = tripVM.Description,
-                Price = tripVM.Price,
-                DiscountedPrice = tripVM.DiscountedPrice,
-                Image = mainImageName,
-                AvailableSeats = tripVM.AvailableSeats,
-                MaxPeople = tripVM.MaxPeople,
-                Status = tripVM.Status,
-                TripSupimages = new List<TripSupimage>()
-            };
-
-            if (tripVM.SupImages != null)
-            {
-                foreach (var image in tripVM.SupImages)
+                return View(tripcreateVM);
+          try
+          { 
+                var trip = new Trip
                 {
-                    string imageName = Guid.NewGuid() + Path.GetExtension(image.FileName);
-                    string imagePath = Path.Combine(supImagesFolder, imageName);
+                    Place = tripcreateVM.Place,
+                    StartDate = tripcreateVM.StartDate,
+                    EndDate = tripcreateVM.EndDate,
+                    Description = tripcreateVM.Description,
+                    Price = tripcreateVM.Price,
+                    DiscountedPrice = tripcreateVM.DiscountedPrice,
+                    AvailableSeats = tripcreateVM.AvailableSeats,
+                    MaxPeople = tripcreateVM.MaxPeople,
+                    Status = tripcreateVM.Status,
+                };
 
-                    using (var stream = new FileStream(imagePath, FileMode.Create))
+                if (tripcreateVM.MainImage is not null && tripcreateVM.MainImage.Length > 0)
+                {
+                    var tripsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trips");
+                    if (!Directory.Exists(tripsFolder))
+                        Directory.CreateDirectory(tripsFolder);
+
+
+
+                    var mainImageName = Guid.NewGuid().ToString() + Path.GetExtension(tripcreateVM.MainImage.FileName);
+                    var mainImagePath = Path.Combine(tripsFolder, mainImageName);
+                    using (var stream = new FileStream(mainImagePath, FileMode.Create))
                     {
-                        await image.CopyToAsync(stream);
+                        await tripcreateVM.MainImage.CopyToAsync(stream);
                     }
 
-                    trip.TripSupimages.Add(new TripSupimage
+                    trip.Image = mainImageName;
+                }
+
+                await _tripRepository.AddAsync(trip, cancellationtoken);
+                await _tripRepository.CommitAsync(cancellationtoken);
+
+                if (tripcreateVM.SupImages != null)
+                {
+                    var supImagesFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trip-sup");
+                    if (!Directory.Exists(supImagesFolder))
+                        Directory.CreateDirectory(supImagesFolder);
+
+                    foreach (var image in tripcreateVM.SupImages)
                     {
-                        SupImg = imageName
-                    });
+                        var imageName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
+                        var imagePath = Path.Combine(supImagesFolder, imageName);
+
+                        using (var stream = new FileStream(imagePath, FileMode.Create))
+                        {
+                            await image.CopyToAsync(stream);
+                        }
+
+                        await _tripSupimageRepository.AddAsync(new TripSupimage
+                        {
+                            TripId = trip.Id,
+                            SupImg = imageName
+                        }, cancellationtoken);
+                    }
+                    await _tripSupimageRepository.CommitAsync(cancellationtoken);
                 }
             }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, "An error occurred while uploading images: " + ex.Message);
+                return View(tripcreateVM);
+            }
 
-            await _tripRepository.AddAsync(trip);
             return RedirectToAction("Index");
         }
         //-----Edit-------
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int id,CancellationToken cancellationToken)
         {
-            var trip = await _tripRepository.GetAsync(id);
+            var trip = await _tripRepository.GetOneAsync(e=>e.Id == id, includes:[e=>e.TripSupimages],cancellationToken:cancellationToken);
             if (trip == null) return NotFound();
 
-            var tripVM = new TripVM
+            var tripVM = new TripEditVM
             {
                 Id = trip.Id,
                 Place = trip.Place,
@@ -105,7 +125,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
                 DiscountedPrice = trip.DiscountedPrice,
                 AvailableSeats = trip.AvailableSeats,
                 MaxPeople = trip.MaxPeople,
-                Status = trip.Status
+                Status = trip.Status,
             };
 
             return View(tripVM);
@@ -113,65 +133,113 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, TripVM tripVM)
+        public async Task<IActionResult> Edit(TripEditVM tripeEditVM,CancellationToken cancellationToken)
         {
-            if (id != tripVM.Id) return BadRequest();
-            if (!ModelState.IsValid) return View(tripVM);
-
-            var trip = await _tripRepository.GetAsync(id);
+            if (!ModelState.IsValid) return View(tripeEditVM);
+    
+            var trip = await _tripRepository.GetOneAsync(e=>e.Id== tripeEditVM.Id,cancellationToken:cancellationToken);
             if (trip == null) return NotFound();
 
-            trip.Place = tripVM.Place;
-            trip.StartDate = tripVM.StartDate;
-            trip.EndDate = tripVM.EndDate;
-            trip.Description = tripVM.Description;
-            trip.Price = tripVM.Price;
-            trip.DiscountedPrice = tripVM.DiscountedPrice;
-            trip.AvailableSeats = tripVM.AvailableSeats;
-            trip.MaxPeople = tripVM.MaxPeople;
-            trip.Status = tripVM.Status;
+            trip.Place = tripeEditVM.Place;
+            trip.StartDate = tripeEditVM.StartDate;
+            trip.EndDate = tripeEditVM.EndDate;
+            trip.Description = tripeEditVM.Description;
+            trip.Price = tripeEditVM.Price;
+            trip.DiscountedPrice = tripeEditVM.DiscountedPrice;
+            trip.AvailableSeats = tripeEditVM.AvailableSeats;
+            trip.MaxPeople = tripeEditVM.MaxPeople;
+            trip.Status = tripeEditVM.Status;
 
-            string tripsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trips");
-            string supImagesFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trip-sup");
+            var tripsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trips");
+            var supImagesFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trip-sup");
             if (!Directory.Exists(tripsFolder)) Directory.CreateDirectory(tripsFolder);
             if (!Directory.Exists(supImagesFolder)) Directory.CreateDirectory(supImagesFolder);
 
-            if (tripVM.MainImage != null)
+            if (tripeEditVM.MainImage != null)
             {
-                string mainImageName = Guid.NewGuid() + Path.GetExtension(tripVM.MainImage.FileName);
-                string mainImagePath = Path.Combine(tripsFolder, mainImageName);
+                var existingMainImagePath = Path.Combine(tripsFolder, trip.Image);
+                if (System.IO.File.Exists(existingMainImagePath))
+                {
+                    System.IO.File.Delete(existingMainImagePath);
+                }
+
+                var mainImageName = Guid.NewGuid().ToString() + Path.GetExtension(tripeEditVM.MainImage.FileName);
+                var mainImagePath = Path.Combine(tripsFolder, mainImageName);
 
                 using (var stream = new FileStream(mainImagePath, FileMode.Create))
                 {
-                    await tripVM.MainImage.CopyToAsync(stream);
+                    await tripeEditVM.MainImage.CopyToAsync(stream);
                 }
 
                 trip.Image = mainImageName;
             }
 
-            if (tripVM.SupImages != null)
+            if (tripeEditVM.SupImages != null)
             {
-                foreach (var image in tripVM.SupImages)
+                foreach (var existingSupImage in trip.TripSupimages)
                 {
-                    string imageName = Guid.NewGuid() + Path.GetExtension(image.FileName);
-                    string imagePath = Path.Combine(supImagesFolder, imageName);
+                    var existingImagePath = Path.Combine(supImagesFolder, existingSupImage.SupImg);
+                    if (System.IO.File.Exists(existingImagePath))
+                    {
+                        System.IO.File.Delete(existingImagePath);
+                    }
+                }
+
+                _tripSupimgIRepository.RemoveTripSupImages(trip.TripSupimages);
+               await _tripSupimageRepository.CommitAsync(cancellationToken);
+
+                foreach (var image in tripeEditVM.SupImages)
+                {
+                    var imageName = Guid.NewGuid() + Path.GetExtension(image.FileName);
+                    var imagePath = Path.Combine(supImagesFolder, imageName);
 
                     using (var stream = new FileStream(imagePath, FileMode.Create))
                     {
                         await image.CopyToAsync(stream);
                     }
 
-                    trip.TripSupimages.Add(new TripSupimage { SupImg = imageName });
+                   await _tripSupimageRepository.AddAsync(new TripSupimage
+                    {
+                        TripId = trip.Id,
+                        SupImg = imageName
+                    },cancellationToken);
                 }
             }
 
-            await _tripRepository.UpdateAsync(trip);
+             _tripRepository.Update(trip);
+             await _tripRepository.CommitAsync(cancellationToken);
 
             return RedirectToAction("Index");
         }
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id,CancellationToken cancellationToken)
         {
-            await _tripRepository.DeleteAsync(id);
+           var trip = await _tripRepository.GetOneAsync(e => e.Id == id,cancellationToken:cancellationToken);
+              if (trip == null) return NotFound();
+
+            var tripsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trips");
+            var supImagesFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trip-sup");
+            var existingMainImagePath = Path.Combine(tripsFolder, trip.Image);
+
+            if (System.IO.File.Exists(existingMainImagePath))
+            {
+                System.IO.File.Delete(existingMainImagePath);
+            }
+
+            foreach (var existingSupImage in trip.TripSupimages)
+            {
+                var existingImagePath = Path.Combine(supImagesFolder, existingSupImage.SupImg);
+                if (System.IO.File.Exists(existingImagePath))
+                {
+                    System.IO.File.Delete(existingImagePath);
+                }
+            }
+
+            _tripRepository.Delete(trip);
+            _tripSupimgIRepository.RemoveTripSupImages(trip.TripSupimages);
+
+            await _tripRepository.CommitAsync(cancellationToken);
+           await _tripSupimgIRepository.CommitAsync(cancellationToken);
+
             return RedirectToAction("Index");
         }
     }

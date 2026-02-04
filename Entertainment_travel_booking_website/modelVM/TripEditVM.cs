@@ -2,9 +2,9 @@
 
 namespace Entertainment_travel_booking_website.modelVM
 {
-    public class TripVM
+    public class TripEditVM
     {
-       public int Id { get; set; }
+        public int Id { get; set; }
         [Required]
         public string Place { get; set; } = string.Empty;
 
@@ -16,9 +16,9 @@ namespace Entertainment_travel_booking_website.modelVM
         public decimal Price { get; set; }
         public decimal? DiscountedPrice { get; set; }
 
-        public IFormFile MainImage { get; set; }  
+        public IFormFile? MainImage { get; set; }
 
-        public List<IFormFile>? SupImages { get; set; } 
+        public List<IFormFile>? SupImages { get; set; }
 
         public int AvailableSeats { get; set; }
         public int MaxPeople { get; set; }
