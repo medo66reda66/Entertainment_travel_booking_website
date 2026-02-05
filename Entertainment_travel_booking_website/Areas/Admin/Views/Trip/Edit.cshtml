@@ -5,7 +5,6 @@
     ViewData["Title"] = "Edit Trip";
 }
 
-
 <h3 class="text-center mb-4 text-primary">Edit Trip</h3>
 
 <form asp-action="Edit"
@@ -13,120 +12,157 @@
       enctype="multipart/form-data"
       class="row g-3">
 
-    <!-- Hidden Id -->
     <input type="hidden" asp-for="Id" />
 
     <!-- Place -->
-    <div class="col-md-6">
+    <div class="col-md-6 mb-3">
         <label asp-for="Place" class="form-label"></label>
-        <input asp-for="Place" class="form-control" />
+        <input asp-for="Place" class="form-control" value="@Model.Place" />
         <span asp-validation-for="Place" class="text-danger"></span>
     </div>
 
     <!-- Price -->
-    <div class="col-md-6">
+    <div class="col-md-6 mb-3">
         <label asp-for="Price" class="form-label"></label>
-        <input asp-for="Price" class="form-control" />
+        <input asp-for="Price" class="form-control" value="@Model.Price" />
         <span asp-validation-for="Price" class="text-danger"></span>
     </div>
 
     <!-- Discounted Price -->
-    <div class="col-md-6">
+    <div class="col-md-6 mb-3">
         <label asp-for="DiscountedPrice" class="form-label"></label>
-        <input asp-for="DiscountedPrice" class="form-control" />
+        <input asp-for="DiscountedPrice" class="form-control" value="@Model.DiscountedPrice" />
+        <span asp-validation-for="DiscountedPrice" class="text-danger"></span>
     </div>
 
     <!-- Available Seats -->
-    <div class="col-md-6">
+    <div class="col-md-6 mb-3">
         <label asp-for="AvailableSeats" class="form-label"></label>
-        <input asp-for="AvailableSeats" class="form-control" />
+        <input asp-for="AvailableSeats" class="form-control" value="@Model.AvailableSeats" />
+        <span asp-validation-for="AvailableSeats" class="text-danger"></span>
     </div>
 
     <!-- Max People -->
-    <div class="col-md-6">
+    <div class="col-md-6 mb-3">
         <label asp-for="MaxPeople" class="form-label"></label>
-        <input asp-for="MaxPeople" class="form-control" />
+        <input asp-for="MaxPeople" class="form-control" value="@Model.MaxPeople" />
+        <span asp-validation-for="MaxPeople" class="text-danger"></span>
     </div>
 
-    <!-- Status -->
-    <div class="col-md-6">
+    <div class="col-md-6 mb-3">
         <label asp-for="Status" class="form-label"></label>
         <select asp-for="Status" class="form-select">
-            <option value="true">Active</option>
-            <option value="false">Inactive</option>
+            <option value="true" selected="@(Model.Status ? "selected" : null)">Active</option>
+            <option value="false" selected="@(!Model.Status ? "selected" : null)">Inactive</option>
         </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
     </div>
 
     <!-- Start Date -->
-    <div class="col-md-6">
+    <div class="col-md-6 mb-3">
         <label asp-for="StartDate" class="form-label"></label>
-        <input asp-for="StartDate" type="date" class="form-control" />
+        <input asp-for="StartDate" type="date" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
         <span asp-validation-for="StartDate" class="text-danger"></span>
     </div>
 
     <!-- End Date -->
-    <div class="col-md-6">
+    <div class="col-md-6 mb-3">
         <label asp-for="EndDate" class="form-label"></label>
-        <input asp-for="EndDate" type="date" class="form-control" />
+        <input asp-for="EndDate" type="date" class="form-control" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
         <span asp-validation-for="EndDate" class="text-danger"></span>
     </div>
 
     <!-- Description -->
-    <div class="col-12">
+    <div class="col-12 mb-3">
         <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" rows="4" class="form-control"></textarea>
+        <textarea asp-for="Description" rows="4" class="form-control">@Model.Description</textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <!-- Hotel Dropdown -->
+    <div class="col-md-6 mb-3">
+        <label asp-for="HotelId" class="form-label">Hotel</label>
+        <select asp-for="HotelId" class="form-select">
+            <option value="">-- Select Hotel --</option>
+            @if (ViewBag.Hotels != null)
+            {
+                foreach (var hotel in ViewBag.Hotels)
+                {
+                    <option value="@hotel.Id" selected="@(Model.HotelId == hotel.Id ? "selected" : null)">@hotel.Name</option>
+                }
+            }
+        </select>
+        <span asp-validation-for="HotelId" class="text-danger"></span>
+    </div>
+
+    <!-- Additional Activity Dropdown -->
+    <div class="col-md-6 mb-3">
+        <label asp-for="AdditionalActivityId" class="form-label">Additional Activity</label>
+        <select asp-for="AdditionalActivityId" class="form-select">
+            <option value="">-- Select Activity --</option>
+            @if (ViewBag.Activities != null)
+            {
+                foreach (var activity in ViewBag.Activities)
+                {
+                    <option value="@activity.Id" selected="@(Model.AdditionalActivityId == activity.Id ? "selected" : null)">@activity.Place</option>
+                }
+            }
+        </select>
+        <span asp-validation-for="AdditionalActivityId" class="text-danger"></span>
+    </div>
+
+    <!-- Existing Main Image -->
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Current Main Image</label>
+        @if (!string.IsNullOrEmpty(Model.ExistingMainImage))
+        {
+            <div>
+                <img src="~/images/trips/@Model.ExistingMainImage" alt="Main Image" class="img-thumbnail" style="max-width: 200px;" />
+            </div>
+        }
+        else
+        {
+            <p>No main image uploaded.</p>
+        }
     </div>
 
     <!-- Main Image -->
-    @* <div class="col-md-6">
-        <label class="form-label">Change Main Image</label>
-        <input asp-for="MainImage" type="file" class="form-control" />
-    </div> *@
-    <div class="mb-3">
-        <label for="img" class="form-label">Img</label>
-        <input type="file" class="form-control" asp-for="MainImage" accept="images/*"
-               onchange="previewImage(event)" />
+    <div class="col-md-6 mb-3">
+        <label asp-for="MainImage" class="form-label">Change Main Image</label>
+        <input asp-for="MainImage" type="file" class="form-control" accept="image/*" />
     </div>
-    <div class="mb-3">
-        <img id="preview"
-             src="~/images/trips/@Model.MainImage"
-             alt="Current Image"
-             style="max-width: 200px; border:1px solid #ccc; padding:5px; border-radius:10px;" />
+
+    <!-- Existing Sub Images -->
+    <div class="col-md-6 mb-3">
+        <label class="form-label">Current Sub Images</label>
+        @if (Model.ExistingSupImages != null && Model.ExistingSupImages.Any())
+        {
+            <div class="d-flex flex-wrap">
+                @foreach (var img in Model.ExistingSupImages)
+                {
+                    <img src="~/images/trip-sup/@img.SupImg" alt="Sub Image" class="img-thumbnail me-2 mb-2" style="max-width: 100px;" />
+                }
+            </div>
+        }
+        else
+        {
+            <p>No sub images uploaded.</p>
+        }
     </div>
 
     <!-- Sub Images -->
-    <div class="col-md-6">
-        <label class="form-label">Change Sub Images</label>
+    <div class="col-md-6 mb-3">
+        <label asp-for="SupImages" class="form-label">Add New Sub Images</label>
         <input asp-for="SupImages" type="file" multiple class="form-control" />
     </div>
 
     <!-- Buttons -->
     <div class="col-12 mt-4 text-center">
-        <button type="submit" class="btn btn-primary px-4">
-            Save Changes
-        </button>
-        <a asp-action="Index" class="btn btn-secondary ms-2">
-            Cancel
-        </a>
+        <button type="submit" class="btn btn-primary px-4">Save Changes</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
     </div>
 
 </form>
-<script>
-    function previewImage(event) {
-        const input = event.target;
-        const preview = document.getElementById("preview");
-
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                preview.src = e.target.result; // الصورة الجديدة
-            }
-
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-</script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

@@ -1,0 +1,82 @@
+﻿@model IEnumerable<Entertainment_travel_booking_website.Models.Hotel>
+
+@{
+    ViewData["Title"] = "Hotels";
+}
+
+<h2 class="mb-4">Hotels</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-success">Add New Hotel</a>
+</p>
+
+<table class="table table-bordered table-striped table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Price Per Night</th>
+            <th>Status</th>
+            <th>Sup Images</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null && Model.Any())
+        {
+            foreach (var hotel in Model)
+            {
+                <tr>
+                    <td style="width:100px;">
+                        @if (!string.IsNullOrEmpty(hotel.Image))
+                        {
+                            <img src="~/images/hotels/@hotel.Image" alt="@hotel.Name" class="img-fluid rounded" style="max-height:80px;" />
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Image</span>
+                        }
+                    </td>
+                    <td>@hotel.Name</td>
+                    <td>@hotel.Location</td>
+                    <td>@hotel.PricePerNight</td>
+                    <td>
+                        @if (hotel.Availability)
+                        {
+                            <span class="badge bg-success">Available</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Unavailable</span>
+                        }
+                    </td>
+                    <td>
+                        @if (hotel.HotelSupImgs != null && hotel.HotelSupImgs.Any())
+                        {
+                            foreach (var sup in hotel.HotelSupImgs)
+                            {
+                                <img src="~/images/hotel-sup/@sup.SupImg" alt="Sup Image" class="img-thumbnail me-1 mb-1" style="height:50px;" />
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Sup Images</span>
+                        }
+                    </td>
+                    <td style="width:150px;">
+                        <a asp-action="Edit" asp-route-id="@hotel.Id" class="btn btn-primary btn-sm me-1">Edit</a>
+                        <a asp-action="Delete" asp-route-id="@hotel.Id" class="btn btn-danger btn-sm"
+                           onclick="return confirm('Are you sure you want to delete this hotel?');">Delete</a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="7" class="text-center text-muted">No hotels found.</td>
+            </tr>
+        }
+    </tbody>
+</table>

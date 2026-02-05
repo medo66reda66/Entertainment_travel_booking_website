@@ -8,5 +8,8 @@
         public decimal Price { get; set; }
         public DateTime Date { get; set; }
         public List<Trip>? Trips { get; set; }
+        //public string MainImage { get; set; }
+        public List<ActivitiesSupImg>? ActivitiesSupImgs { get; set; }
+
     }
 }
