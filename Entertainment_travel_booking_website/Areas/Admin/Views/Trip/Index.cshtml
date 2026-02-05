@@ -20,7 +20,10 @@
             <th>Discounted Price</th>
             <th>Available Seats</th>
             <th>Status</th>
+            <th>Hotel</th>
+            <th>Additional Activity</th>
             <th>Main Image</th>
+            <th>Sub Images</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -32,19 +35,54 @@
                 <td>@trip.StartDate.ToString("yyyy-MM-dd")</td>
                 <td>@trip.EndDate.ToString("yyyy-MM-dd")</td>
                 <td>@trip.Price.ToString("C")</td>
-                <td>@trip.DiscountedPrice</td>
+                <td>@(trip.DiscountedPrice.HasValue? trip.DiscountedPrice.Value.ToString("C") : "-")</td>
                 <td>@trip.AvailableSeats</td>
-                <td>@trip.Status</td>
+                <td>@(trip.Status ? "Active" : "Inactive")</td>
+
+                <td>@trip.Hotel?.Name ?? "N/A"</td>
+                <td>@trip.AdditionalActivity?.Place ?? "N/A"</td>
+
                 <td>
                     @if (!string.IsNullOrEmpty(trip.Image))
                     {
-                        <img src="~/images/trips/@trip.Image" alt="@trip.Place" width="100" />
+                        <img src="~/images/trips/@trip.Image"
+                             alt="@trip.Place"
+                             width="100" />
                     }
                 </td>
+
                 <td>
-                    <a asp-action="Edit" asp-route-id="@trip.Id" class="btn btn-sm btn-warning">Edit</a>
-                    <a asp-action="Details" asp-route-id="@trip.Id" class="btn btn-sm btn-info">Details</a>
-                    <a asp-action="Delete" asp-route-id="@trip.Id" class="btn btn-sm btn-danger">Delete</a>
+                    @if (trip.TripSupimages != null && trip.TripSupimages.Any())
+                    {
+                        <div class="d-flex flex-wrap gap-1">
+                            @foreach (var img in trip.TripSupimages)
+                            {
+                                <img src="~/images/trip-sup/@img.SupImg"
+                                     width="50"
+                                     height="50"
+                                     class="rounded border"
+                                     style="object-fit:cover;" />
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No Images</span>
+                    }
+                </td>
+
+                <td>
+                    <a asp-action="Edit"
+                       asp-route-id="@trip.Id"
+                       class="btn btn-sm btn-warning">Edit</a>
+
+                    <a asp-action="Details"
+                       asp-route-id="@trip.Id"
+                       class="btn btn-sm btn-info">Details</a>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@trip.Id"
+                       class="btn btn-sm btn-danger">Delete</a>
                 </td>
             </tr>
         }

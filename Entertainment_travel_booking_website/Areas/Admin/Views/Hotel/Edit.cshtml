@@ -1,0 +1,72 @@
+﻿@using Entertainment_travel_booking_website.modelVM
+@model HotelEditVM
+@{
+    ViewData["Title"] = "Edit Hotel";
+}
+
+<h2>Edit Hotel</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data" class="row g-3">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+
+    <div class="col-md-6">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="Location" class="form-label"></label>
+        <input asp-for="Location" class="form-control" />
+        <span asp-validation-for="Location" class="text-danger"></span>
+    </div>
+
+    <div class="col-md-6">
+        <label asp-for="PricePerNight" class="form-label"></label>
+        <input asp-for="PricePerNight" class="form-control" />
+        <span asp-validation-for="PricePerNight" class="text-danger"></span>
+    </div>
+
+    <div class="col-12">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" rows="4" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <!-- Main Image -->
+    <div class="col-md-6">
+        <label asp-for="MainImage" class="form-label">Main Image</label>
+        <input asp-for="MainImage" type="file" class="form-control" />
+        @if (!string.IsNullOrEmpty(Model.ExistingMainImage))
+        {
+            <div class="mt-2">
+                <img src="~/images/hotels/@Model.ExistingMainImage" width="100" height="100" style="object-fit:cover;" class="border rounded" />
+                <div class="text-muted">@Model.ExistingMainImage</div>
+            </div>
+        }
+    </div>
+
+    <!-- Sub Images -->
+    <div class="col-md-6">
+        <label asp-for="SupImages" class="form-label">Sub Images</label>
+        <input asp-for="SupImages" type="file" multiple class="form-control" />
+        @if (Model.ExistingSupImages != null && Model.ExistingSupImages.Any())
+        {
+            <div class="d-flex flex-wrap gap-2 mt-2">
+                @foreach (var img in Model.ExistingSupImages)
+                {
+                    <div class="position-relative text-center">
+                        <img src="~/images/hotel-sup/@img.SupImg" width="70" height="70" class="rounded border" style="object-fit:cover;" />
+                        <div class="text-muted" style="font-size:0.8rem;">@img.SupImg</div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="col-12 mt-3">
+        <button type="submit" class="btn btn-success">Save Changes</button>
+        <a asp-action="Index" class="btn btn-secondary">Back</a>
+    </div>
+</form>

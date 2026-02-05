@@ -15,7 +15,11 @@
         public int MaxPeople { get; set; }
         public bool Status { get; set; }
         public List<TripSupimage>? TripSupimages { get; set; }
-        public List<AdditianActivities>? AdditianActivities { get; set; }
+        public int? HotelId { get; set; }
+        public Hotel? Hotel { get; set; }
+
+        public int? AdditionalActivityId { get; set; }
+        public AdditianActivities? AdditionalActivity { get; set; }
 
 
     }

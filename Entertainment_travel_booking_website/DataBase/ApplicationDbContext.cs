@@ -15,6 +15,7 @@ namespace Entertainment_travel_booking_website.DataBase
         public DbSet<ActivitiesSupImg> activitiesSupImgs { get; set; }
         public DbSet<Hotel> hotels { get; set; }
         public DbSet<HotelSupImg> hotelSupImgs { get; set; }
+        public DbSet<TripSupimage> tripSupimages { get; set; }
         public DbSet<Room> rooms { get; set; }
         
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

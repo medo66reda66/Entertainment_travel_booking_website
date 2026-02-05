@@ -1,0 +1,64 @@
+﻿@model Entertainment_travel_booking_website.modelVM.AdditionalActivityVM
+
+<h2>Edit Additional Activity</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="Place" class="form-label"></label>
+        <input asp-for="Place" class="form-control" />
+        <span asp-validation-for="Place" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Date" class="form-label"></label>
+        <input asp-for="Date" type="date" class="form-control" />
+        <span asp-validation-for="Date" class="text-danger"></span>
+    </div>
+
+    <!-- عرض الصور الفرعية الموجودة -->
+    @if (Model.ExistingSubImages != null && Model.ExistingSubImages.Any())
+    {
+        <div class="mb-3">
+            <label class="form-label">الصور الفرعية الحالية</label>
+            <div class="row">
+                @foreach (var img in Model.ExistingSubImages)
+                {
+                    <div class="col-md-3 mb-2">
+                        <img src="~/images/additionalActivities/@img" alt="صورة فرعية" class="img-thumbnail" style="width: 100px; height: 100px;" />
+                        <!-- إذا أردت إضافة حذف، يمكن إضافة checkbox هنا، لكن الكود الخلفي يحتاج تعديل -->
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- حقل رفع الصور الفرعية الجديدة -->
+    <div class="mb-3">
+        <label asp-for="SubImageFiles" class="form-label">إضافة صور فرعية جديدة (اختياري - يمكن رفع عدة صور)</label>
+        <input asp-for="SubImageFiles" type="file" multiple class="form-control" accept="image/*" />
+        <span asp-validation-for="SubImageFiles" class="text-danger"></span>
+        <small class="form-text text-muted">يمكنك اختيار عدة صور جديدة (مثل JPG, PNG). الصور الحالية ستظل كما هي.</small>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save Changes</button>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
