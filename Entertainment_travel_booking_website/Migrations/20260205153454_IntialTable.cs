@@ -5,7 +5,7 @@
 namespace Entertainment_travel_booking_website.Migrations
 {
     /// <inheritdoc />
-    public partial class addHotelinMigration : Migration
+    public partial class IntialTable : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

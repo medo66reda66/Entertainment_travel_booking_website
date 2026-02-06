@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entertainment_travel_booking_website.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260205131641_InitialFix")]
-    partial class InitialFix
+    [Migration("20260205153454_IntialTable")]
+    partial class IntialTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

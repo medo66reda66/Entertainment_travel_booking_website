@@ -97,7 +97,7 @@
     <!-- Additional Activity Dropdown -->
     <div class="col-md-6 mb-3">
         <label asp-for="AdditionalActivityId" class="form-label">Additional Activity</label>
-        <select asp-for="AdditionalActivityId" class="form-select">
+        <select asp-for="AdditionalActivityId" class="form-select" multiple>
             <option value="">-- Select Activity --</option>
             @if (ViewBag.Activities != null)
             {
