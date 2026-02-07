@@ -1,0 +1,98 @@
+﻿@model Entertainment_travel_booking_website.modelVM.RoomVM
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Add New Room";
+}
+
+<div class="container-fluid">
+    <div class="mb-4">
+        <a asp-action="Index" class="btn btn-link text-decoration-none p-0 mb-2">
+            <i class="bi bi-arrow-left"></i> Back to Rooms List
+        </a>
+        <h2 class="fw-bold text-dark">Add New Room</h2>
+        <p class="text-muted">Fill in the details below to register a new room and link it to a hotel.</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title mb-0 fw-bold text-primary">
+                        <i class="bi bi-info-circle me-2"></i>Room General Information
+                    </h5>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="row g-4">
+                            <div class="col-md-12">
+                                <label asp-for="HotelId" class="form-label fw-semibold text-dark">Associated Hotel</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-building text-muted"></i></span>
+                                    <select asp-for="HotelId" asp-items="Model.HotelList" class="form-select bg-light border-start-0 shadow-none">
+                                        <option disabled selected>-- Select a Hotel --</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="HotelId" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="Type" class="form-label fw-semibold text-dark">Room Type Category</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-tag text-muted"></i></span>
+                                    <select asp-for="Type" class="form-select bg-light border-start-0 shadow-none" asp-items="Html.GetEnumSelectList<Entertainment_travel_booking_website.Models.RoomType>()">
+                                        <option value="">-- Select Type --</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="Type" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="locationInHotel" class="form-label fw-semibold text-dark">Location / Floor Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-geo-alt text-muted"></i></span>
+                                    <input asp-for="locationInHotel" class="form-control bg-light border-start-0 shadow-none" placeholder="e.g. 3rd Floor, Sea View" />
+                                </div>
+                                <span asp-validation-for="locationInHotel" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Description" class="form-label fw-semibold text-dark">Detailed Description</label>
+                                <textarea asp-for="Description" class="form-control bg-light shadow-none" rows="5" placeholder="Describe the room features, amenities, bed types, etc."></textarea>
+                                <span asp-validation-for="Description" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="form-check form-switch p-3 bg-light rounded-3 border-0 shadow-sm">
+                                    <input class="form-check-input ms-0 me-3" type="checkbox" asp-for="Availability" id="flexSwitchCheckDefault" checked>
+                                    <label class="form-check-label fw-bold text-dark" for="flexSwitchCheckDefault">
+                                        Activate Room Availability
+                                    </label>
+                                    <div class="form-text ms-5">If enabled, guests will be able to book this room immediately.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 d-flex gap-3">
+                            <button type="submit" class="btn btn-primary px-5 py-3 fw-bold shadow-sm rounded-3">
+                                <i class="bi bi-cloud-upload me-2"></i>Save Room Details
+                            </button>
+                            <a asp-action="Index" class="btn btn-light px-5 py-3 fw-bold text-muted border rounded-3">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

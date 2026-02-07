@@ -2,26 +2,182 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <title>@ViewData["Title"] - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel | Travel Booking</title>
 
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.css">
 
+    <style>
+        :root {
+            --sidebar-bg: #1e1e2d;
+            --sidebar-hover: #2b2b40;
+            --accent-color: #009ef7;
+            --text-muted: #a1a5b7;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f8fa;
+            margin: 0;
+        }
+
+        /* Sidebar Styling */
+        #wrapper { display: flex; width: 100%; align-items: stretch; }
+
+        #sidebar-wrapper {
+            min-width: 265px;
+            max-width: 265px;
+            background: var(--sidebar-bg);
+            min-height: 100vh;
+            transition: all 0.3s;
+        }
+
+        .sidebar-heading {
+            padding: 2rem 1.5rem;
+            color: white;
+            font-weight: 700;
+            font-size: 1.25rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+            border-radius: 8px;
+            margin: 4px 15px;
+            font-weight: 500;
+        }
+
+        .nav-link i { font-size: 1.2rem; margin-right: 15px; }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--sidebar-hover);
+            color: var(--accent-color);
+        }
+
+        .nav-link.active { background: #2b2b40; border-left: 4px solid var(--accent-color); }
+
+        /* Content Styling */
+        #page-content-wrapper { width: 100%; }
+
+        .navbar {
+            background: white !important;
+            padding: 15px 30px;
+            border-bottom: 1px solid #ebedf3;
+        }
+
+        .content-container { padding: 30px; }
+
+        .card {
+            border: none;
+            box-shadow: 0 0 20px 0 rgba(76, 87, 125, 0.02);
+            border-radius: 12px;
+        }
+
+        .btn-primary { background-color: var(--accent-color); border: none; padding: 10px 20px; border-radius: 8px; }
+
+        /* Mobile Toggle */
+        /* الحركة السلسة للمحتوى والسايد بار */
+        #wrapper {
+            overflow-x: hidden;
+        }
+
+        #sidebar-wrapper {
+            transition: margin 0.25s ease-out;
+        }
+
+        /* الكلاس اللي الـ JS بيضيفه للجسم كله */
+        body.sb-sidenav-toggled #sidebar-wrapper {
+            margin-left: -265px; /* نفس عرض السايد بار بتاعك */
+        }
+
+        /* في الشاشات الصغيرة يختفي أوتوماتيك */
+        @@media (max-width: 768px) {
+            #sidebar-wrapper
+
+        {
+            margin-left: -265px;
+        }
+
+        body.sb-sidenav-toggled #sidebar-wrapper {
+            margin-left: 0;
+        }
+
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body>
 
-    <nav class="navbar navbar-dark bg-dark">
-        <div class="container-fluid">
-            <span class="navbar-brand">Admin Panel</span>
+    <div id="wrapper">
+        <nav id="sidebar-wrapper">
+            <div class="sidebar-heading">
+                <span class="text-info">T</span>ravel<span class="text-white">Admin</span>
+            </div>
+            <div class="list-group list-group-flush">
+                <small class="text-uppercase px-4 mb-2" style="color: #565674; font-size: 0.7rem;">Main Menu</small>
+
+                <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Hotel" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Hotel" asp-action="Index">
+                    <i class="bi bi-grid-1x2"></i> Hotels
+                </a>
+
+                <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Room" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Room" asp-action="Index">
+                    <i class="bi bi-door-closed"></i> Rooms
+                </a>
+
+                <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Trip" ? "active" : "")"
+                   asp-area="Admin" asp-controller="Trip" asp-action="Index">
+                    <i class="bi bi-map"></i> Trips
+                </a>  <a class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "AdditionalActivities" ? "active" : "")"
+                         asp-area="Admin" asp-controller="AdditionalActivities" asp-action="Index">
+                    <i class="bi bi-map"></i> Activites
+                </a>
+
+                <div class="mt-5 px-4">
+                    <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-sm btn-outline-secondary w-100 text-white">
+                        <i class="bi bi-arrow-left-circle"></i> View Website
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <div id="page-content-wrapper">
+            <nav class="navbar navbar-expand-lg navbar-light shadow-sm">
+                <button class="btn border-0 shadow-none text-muted" id="sidebarToggle">
+                    <i class="bi bi-text-indent-left fs-3"></i>
+                </button>
+                <div class="ms-auto d-flex align-items-center">
+                    <div class="dropdown">
+                        <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <img src="https://ui-avatars.com/api/?name=Admin&background=009ef7&color=fff" class="rounded-circle me-2" width="35">
+                            <strong>Administrator</strong>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                            <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Profile</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="content-container">
+                <div class="card p-4">
+                    @RenderBody()
+                </div>
+            </div>
         </div>
-    </nav>
-
-    <div class="container mt-4">
-        @RenderBody()
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-  
 
     @RenderSection("Scripts", required: false)
 </body>

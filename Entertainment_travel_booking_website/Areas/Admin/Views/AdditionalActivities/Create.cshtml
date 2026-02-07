@@ -1,45 +1,110 @@
 ﻿@model Entertainment_travel_booking_website.modelVM.AdditionalActivityVM
 
-<h2>Create Additional Activity</h2>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Create Activity";
+}
 
-<form asp-action="Create" method="post" enctype="multipart/form-data">
-    <div class="mb-3">
-        <label asp-for="Place" class="form-label"></label>
-        <input asp-for="Place" class="form-control" />
-        <span asp-validation-for="Place" class="text-danger"></span>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark"><i class="bi bi-star text-warning me-2"></i>Create New Activity</h2>
+            <p class="text-muted mb-0">Add extra fun activities like diving, city tours, or safaris.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
+    <form asp-action="Create" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
 
-    <div class="mb-3">
-        <label asp-for="Price" class="form-label"></label>
-        <input asp-for="Price" class="form-control" />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm p-4 mb-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Activity Details</h5>
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label asp-for="Place" class="form-label fw-bold">Activity Name / Place</label>
+                            <input asp-for="Place" class="form-control" placeholder="e.g. Scuba Diving at Red Sea" />
+                            <span asp-validation-for="Place" class="text-danger small"></span>
+                        </div>
 
-    <div class="mb-3">
-        <label asp-for="Date" class="form-label"></label>
-        <input asp-for="Date" type="date" class="form-control" />
-        <span asp-validation-for="Date" class="text-danger"></span>
-    </div>
+                        <div class="col-12">
+                            <label asp-for="Description" class="form-label fw-bold">Detailed Description</label>
+                            <textarea asp-for="Description" rows="6" class="form-control" placeholder="What will travelers experience during this activity?"></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <!-- حقل رفع الصور الفرعية -->
-    <div class="mb-3">
-        <label asp-for="SubImageFiles" class="form-label">Sub Images (اختياري - يمكن رفع عدة صور)</label>
-        <input asp-for="SubImageFiles" type="file" multiple class="form-control" accept="image/*" />
-        <span asp-validation-for="SubImageFiles" class="text-danger"></span>
-        <small class="form-text text-muted">يمكنك اختيار عدة صور (مثل JPG, PNG).</small>
-    </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-4 mb-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Logistics</h5>
+                    <div class="mb-3">
+                        <label asp-for="Price" class="form-label fw-bold">Price per Person ($)</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted">$</span>
+                            <input asp-for="Price" class="form-control border-start-0 shadow-none" placeholder="0.00" />
+                        </div>
+                        <span asp-validation-for="Price" class="text-danger small"></span>
+                    </div>
 
-    <button type="submit" class="btn btn-success">Create</button>
-</form>
+                    <div class="mb-2">
+                        <label asp-for="Date" class="form-label fw-bold">Event Date</label>
+                        <input asp-for="Date" type="date" class="form-control" />
+                        <span asp-validation-for="Date" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="card border-0 shadow-sm p-4 mb-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Media Gallery</h5>
+                    <div class="mb-1">
+                        <label asp-for="SubImageFiles" class="form-label fw-bold small">Upload Photos</label>
+                        <input asp-for="SubImageFiles" type="file" multiple class="form-control form-control-sm shadow-none" accept="image/*" />
+                        <span asp-validation-for="SubImageFiles" class="text-danger small"></span>
+                        <div class="form-text mt-2" style="font-size: 0.75rem;">
+                            <i class="bi bi-info-circle me-1"></i> You can select multiple images at once (JPG, PNG).
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 py-3 fw-bold shadow-sm rounded-3">
+                    <i class="bi bi-plus-lg me-2"></i> Create Activity
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #ced4da;
+            padding: 0.6rem 0.75rem;
+            border-radius: 8px;
+        }
+
+            .form-control:focus {
+                border-color: #0d6efd;
+                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+            }
+
+        .card {
+            border-radius: 15px;
+        }
+
+        .input-group-text {
+            border: 1px solid #ced4da;
+            border-radius: 8px 0 0 8px;
+        }
+    </style>
 }

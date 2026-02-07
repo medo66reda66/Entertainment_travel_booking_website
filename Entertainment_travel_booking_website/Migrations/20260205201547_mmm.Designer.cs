@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entertainment_travel_booking_website.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260205153454_IntialTable")]
-    partial class IntialTable
+    [Migration("20260205201547_mmm")]
+    partial class mmm
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -139,7 +139,7 @@ namespace Entertainment_travel_booking_website.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("HotelId")
+                    b.Property<int>("HotelId")
                         .HasColumnType("int");
 
                     b.Property<int>("Type")
@@ -271,9 +271,13 @@ namespace Entertainment_travel_booking_website.Migrations
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.Room", b =>
                 {
-                    b.HasOne("Entertainment_travel_booking_website.Models.Hotel", null)
+                    b.HasOne("Entertainment_travel_booking_website.Models.Hotel", "Hotel")
                         .WithMany("Rooms")
-                        .HasForeignKey("HotelId");
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Hotel");
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.Trip", b =>
