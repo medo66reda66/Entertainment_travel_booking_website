@@ -1,72 +1,119 @@
 ﻿@using Entertainment_travel_booking_website.modelVM
 @model HotelEditVM
+
 @{
+    Layout = "_AdminLayout";
     ViewData["Title"] = "Edit Hotel";
 }
 
-<h2>Edit Hotel</h2>
-
-<form asp-action="Edit" method="post" enctype="multipart/form-data" class="row g-3">
-    @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="Id" />
-
-    <div class="col-md-6">
-        <label asp-for="Name" class="form-label"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+<div class="container-fluid">
+    <div class="mb-4">
+        <a asp-action="Index" class="btn btn-link text-decoration-none p-0 mb-2 text-muted">
+            <i class="bi bi-arrow-left"></i> Back to Hotels List
+        </a>
+        <h2 class="fw-bold text-dark">Edit Property Details</h2>
+        <p class="text-muted">Update the information, pricing, or media for <strong>@Model.Name</strong></p>
     </div>
 
-    <div class="col-md-6">
-        <label asp-for="Location" class="form-label"></label>
-        <input asp-for="Location" class="form-control" />
-        <span asp-validation-for="Location" class="text-danger"></span>
-    </div>
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title mb-0 fw-bold text-primary">
+                        <i class="bi bi-pencil-square me-2"></i>General Information
+                    </h5>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-    <div class="col-md-6">
-        <label asp-for="PricePerNight" class="form-label"></label>
-        <input asp-for="PricePerNight" class="form-control" />
-        <span asp-validation-for="PricePerNight" class="text-danger"></span>
-    </div>
+                        <div class="row g-4">
+                            <div class="col-md-12">
+                                <label asp-for="Name" class="form-label fw-semibold text-dark">Hotel Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-building text-muted"></i></span>
+                                    <input asp-for="Name" class="form-control bg-light border-start-0 shadow-none" />
+                                </div>
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
 
-    <div class="col-12">
-        <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" rows="4" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
+                            <div class="col-md-6">
+                                <label asp-for="Location" class="form-label fw-semibold text-dark">Location</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-geo-alt text-muted"></i></span>
+                                    <input asp-for="Location" class="form-control bg-light border-start-0 shadow-none" />
+                                </div>
+                                <span asp-validation-for="Location" class="text-danger small"></span>
+                            </div>
 
-    <!-- Main Image -->
-    <div class="col-md-6">
-        <label asp-for="MainImage" class="form-label">Main Image</label>
-        <input asp-for="MainImage" type="file" class="form-control" />
-        @if (!string.IsNullOrEmpty(Model.ExistingMainImage))
-        {
-            <div class="mt-2">
-                <img src="~/images/hotels/@Model.ExistingMainImage" width="100" height="100" style="object-fit:cover;" class="border rounded" />
-                <div class="text-muted">@Model.ExistingMainImage</div>
+                            <div class="col-md-6">
+                                <label asp-for="PricePerNight" class="form-label fw-semibold text-dark">Price Per Night ($)</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-currency-dollar text-muted"></i></span>
+                                    <input asp-for="PricePerNight" class="form-control bg-light border-start-0 shadow-none" />
+                                </div>
+                                <span asp-validation-for="PricePerNight" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Description" class="form-label fw-semibold text-dark">Description</label>
+                                <textarea asp-for="Description" rows="4" class="form-control bg-light shadow-none"></textarea>
+                                <span asp-validation-for="Description" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded-3 bg-light">
+                                    <label asp-for="MainImage" class="form-label fw-bold">Update Main Image</label>
+                                    <input asp-for="MainImage" type="file" class="form-control mb-3" />
+                                    
+                                    @if (!string.IsNullOrEmpty(Model.ExistingMainImage))
+                                    {
+                                        <div class="mt-2 position-relative d-inline-block">
+                                            <span class="badge bg-dark position-absolute top-0 start-0 m-1 opacity-75">Current</span>
+                                            <img src="~/images/hotels/@Model.ExistingMainImage" class="rounded shadow-sm border" style="width: 150px; height: 100px; object-fit: cover;" />
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="p-3 border rounded-3 bg-light">
+                                    <label asp-for="SupImages" class="form-label fw-bold">Add Sub Images</label>
+                                    <input asp-for="SupImages" type="file" multiple class="form-control mb-3" />
+                                    
+                                    @if (Model.ExistingSupImages != null && Model.ExistingSupImages.Any())
+                                    {
+                                        <div class="d-flex flex-wrap gap-2 mt-2">
+                                            @foreach (var img in Model.ExistingSupImages)
+                                            {
+                                                <div class="position-relative">
+                                                    <img src="~/images/hotel-sup/@img.SupImg" class="rounded border shadow-xs" style="width: 60px; height: 60px; object-fit: cover;" />
+                                                </div>
+                                            }
+                                        </div>
+                                        <small class="text-muted d-block mt-1">Existing Gallery (@Model.ExistingSupImages.Count() images)</small>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 d-flex gap-3">
+                            <button type="submit" class="btn btn-primary px-5 py-3 fw-bold shadow-sm">
+                                <i class="bi bi-check-circle me-2"></i>Save Changes
+                            </button>
+                            <a asp-action="Index" class="btn btn-light px-5 py-3 fw-bold text-muted border">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
-        }
+        </div>
     </div>
+</div>
 
-    <!-- Sub Images -->
-    <div class="col-md-6">
-        <label asp-for="SupImages" class="form-label">Sub Images</label>
-        <input asp-for="SupImages" type="file" multiple class="form-control" />
-        @if (Model.ExistingSupImages != null && Model.ExistingSupImages.Any())
-        {
-            <div class="d-flex flex-wrap gap-2 mt-2">
-                @foreach (var img in Model.ExistingSupImages)
-                {
-                    <div class="position-relative text-center">
-                        <img src="~/images/hotel-sup/@img.SupImg" width="70" height="70" class="rounded border" style="object-fit:cover;" />
-                        <div class="text-muted" style="font-size:0.8rem;">@img.SupImg</div>
-                    </div>
-                }
-            </div>
-        }
-    </div>
-
-    <div class="col-12 mt-3">
-        <button type="submit" class="btn btn-success">Save Changes</button>
-        <a asp-action="Index" class="btn btn-secondary">Back</a>
-    </div>
-</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
