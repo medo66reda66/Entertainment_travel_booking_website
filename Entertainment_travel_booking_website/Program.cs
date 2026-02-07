@@ -1,4 +1,4 @@
-using Ecommerce.Utilities;
+﻿using Ecommerce.Utilities;
 using Entertainment_travel_booking_website.DataBase;
 using Entertainment_travel_booking_website.Models;
 using Entertainment_travel_booking_website.Repository;
@@ -39,6 +39,13 @@ namespace Entertainment_travel_booking_website
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+            // Configure cookie paths correctly for Identity Area
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+                options.AccessDeniedPath = "/Identity/Account/AccessDenied";
+            });
+
             // Generic Repository
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
@@ -54,11 +61,22 @@ namespace Entertainment_travel_booking_website
             builder.Services.AddScoped<IRepository<ApplicationUserOtp>, Repository<ApplicationUserOtp>>();
             builder.Services.AddScoped<HotelSupimgIRepository, HotelSupImgsRepository>();
             builder.Services.AddScoped<HotelRepository>();
+
             // Additional Activities
             builder.Services.AddScoped<IRepository<AdditianActivities>, Repository<AdditianActivities>>();
             builder.Services.AddScoped<IRepository<ActivitiesSupImg>, Repository<ActivitiesSupImg>>();
             builder.Services.AddScoped<IAdditionalActivitySubImageRepository, AdditionalActivitySubImageRepository>();
             builder.Services.AddScoped<IAdditianActivitiesRepository, AdditianActivitiesRepository>();
+
+            // External Login With Google
+            builder.Services.AddAuthentication()
+            .AddGoogle("google", opt =>
+            {
+                var googleAuth = builder.Configuration.GetSection("Authentication:Google");
+                opt.ClientId = googleAuth["ClientId"] ?? "";
+                opt.ClientSecret = googleAuth["ClientSecret"] ?? "";
+                opt.SignInScheme = IdentityConstants.ExternalScheme;
+            });
 
             var app = builder.Build();
 
@@ -71,6 +89,8 @@ namespace Entertainment_travel_booking_website
 
             app.UseHttpsRedirection();
             app.UseRouting();
+
+            app.UseAuthentication(); // مهم جدًا لتفعيل Identity
             app.UseAuthorization();
 
             app.MapStaticAssets();
