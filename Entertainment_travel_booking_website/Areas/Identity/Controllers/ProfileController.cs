@@ -1,4 +1,4 @@
-﻿using Entertainment_travel_booking_website.Models; // ApplicationUser
+﻿using Entertainment_travel_booking_website.Models; 
 using Entertainment_travel_booking_website.modelVM;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
