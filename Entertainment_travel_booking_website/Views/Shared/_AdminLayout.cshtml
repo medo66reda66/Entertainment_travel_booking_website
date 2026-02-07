@@ -178,7 +178,23 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#sidebarToggle").click(function (e) {
+                e.preventDefault();
+                // إضافة أو حذف الكلاس اللي بيخفي الـ Sidebar
+                $("body").toggleClass("sb-sidenav-toggled");
 
-    @RenderSection("Scripts", required: false)
+                // تغيير شكل الأيقونة لما نفتح ونقفل
+                const icon = $(this).find('i');
+                if (icon.hasClass('bi-text-indent-left')) {
+                    icon.removeClass('bi-text-indent-left').addClass('bi-text-indent-right');
+                } else {
+                    icon.removeClass('bi-text-indent-right').addClass('bi-text-indent-left');
+                }
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
