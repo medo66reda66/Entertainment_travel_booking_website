@@ -1,10 +1,11 @@
 ﻿using Entertainment_travel_booking_website.DataBase.Entitytypeconficration;
 using Entertainment_travel_booking_website.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entertainment_travel_booking_website.DataBase
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext:IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -16,6 +17,7 @@ namespace Entertainment_travel_booking_website.DataBase
         public DbSet<Hotel> hotels { get; set; }
         public DbSet<HotelSupImg> hotelSupImgs { get; set; }
         public DbSet<TripSupimage> tripSupimages { get; set; }
+        public DbSet<ApplicationUserOtp> ApplicationUserOtps { get; set; }
         public DbSet<Room> rooms { get; set; }
         
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

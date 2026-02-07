@@ -1,7 +1,10 @@
+using Ecommerce.Utilities;
 using Entertainment_travel_booking_website.DataBase;
 using Entertainment_travel_booking_website.Models;
 using Entertainment_travel_booking_website.Repository;
 using Entertainment_travel_booking_website.Repository.IRepository;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entertainment_travel_booking_website
@@ -22,6 +25,20 @@ namespace Entertainment_travel_booking_website
                 )
             );
 
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Option =>
+            {
+                Option.Password.RequiredLength = 6;
+                Option.Password.RequireLowercase = false;
+                Option.Password.RequireUppercase = false;
+                Option.Password.RequireNonAlphanumeric = false;
+                Option.User.RequireUniqueEmail = true;
+                Option.SignIn.RequireConfirmedEmail = true;
+
+            }).AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders();
+
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
+
             // Generic Repository
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
@@ -34,6 +51,7 @@ namespace Entertainment_travel_booking_website
             // Hotel
             builder.Services.AddScoped<IRepository<Hotel>, Repository<Hotel>>();
             builder.Services.AddScoped<IRepository<HotelSupImg>, Repository<HotelSupImg>>();
+            builder.Services.AddScoped<IRepository<ApplicationUserOtp>, Repository<ApplicationUserOtp>>();
             builder.Services.AddScoped<HotelSupimgIRepository, HotelSupImgsRepository>();
             builder.Services.AddScoped<HotelRepository>();
             // Additional Activities

@@ -1,0 +1,47 @@
+﻿@using Entertainment_travel_booking_website.modelVM
+@model ResendEmailConfirmVM
+
+@{
+    ViewData["Title"] = "ResendEmailConfirm";
+}
+
+<div class="container">
+    <h1>ResendEmailConfirm</h1>
+
+    <h4>ResendEmailConfirmVM</h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <form asp-action="ResendEmailConfirm">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Send" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <a asp-action="Index">Back to List</a>
+    </div>
+    <div>
+        <a asp-action="Login">Back to Login</a>
+    </div>
+</div>
+@* <div>
+    <a asp-action="Register">Register</a>
+</div>
+<div>
+    <a asp-action="ResendEmailConfirm">Resend Email Confirm</a>
+</div> *@
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
