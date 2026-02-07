@@ -2,168 +2,134 @@
 @model TripEditVM
 
 @{
+    Layout = "_AdminLayout";
     ViewData["Title"] = "Edit Trip";
 }
 
-<h3 class="text-center mb-4 text-primary">Edit Trip</h3>
-
-<form asp-action="Edit"
-      method="post"
-      enctype="multipart/form-data"
-      class="row g-3">
-
-    <input type="hidden" asp-for="Id" />
-
-    <!-- Place -->
-    <div class="col-md-6 mb-3">
-        <label asp-for="Place" class="form-label"></label>
-        <input asp-for="Place" class="form-control" value="@Model.Place" />
-        <span asp-validation-for="Place" class="text-danger"></span>
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-dark"><i class="bi bi-pencil-square text-primary me-2"></i>Edit Trip</h2>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Trips</a></li>
+                    <li class="breadcrumb-item active">@Model.Place</li>
+                </ol>
+            </nav>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
     </div>
 
-    <!-- Price -->
-    <div class="col-md-6 mb-3">
-        <label asp-for="Price" class="form-label"></label>
-        <input asp-for="Price" class="form-control" value="@Model.Price" />
-        <span asp-validation-for="Price" class="text-danger"></span>
-    </div>
+    <form asp-action="Edit" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
 
-    <!-- Discounted Price -->
-    <div class="col-md-6 mb-3">
-        <label asp-for="DiscountedPrice" class="form-label"></label>
-        <input asp-for="DiscountedPrice" class="form-control" value="@Model.DiscountedPrice" />
-        <span asp-validation-for="DiscountedPrice" class="text-danger"></span>
-    </div>
+        <div class="row g-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm p-4 mb-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Primary Details</h5>
+                    <div class="row g-3">
+                        <div class="col-md-12">
+                            <label asp-for="Place" class="form-label fw-bold">Trip Destination</label>
+                            <input asp-for="Place" class="form-control" placeholder="Enter destination name" />
+                            <span asp-validation-for="Place" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Price" class="form-label fw-bold">Original Price</label>
+                            <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="DiscountedPrice" class="form-label fw-bold text-success">Discounted Price</label>
+                            <input asp-for="DiscountedPrice" class="form-control border-success" type="number" step="0.01" />
+                        </div>
+                    </div>
+                </div>
 
-    <!-- Available Seats -->
-    <div class="col-md-6 mb-3">
-        <label asp-for="AvailableSeats" class="form-label"></label>
-        <input asp-for="AvailableSeats" class="form-control" value="@Model.AvailableSeats" />
-        <span asp-validation-for="AvailableSeats" class="text-danger"></span>
-    </div>
-
-    <!-- Max People -->
-    <div class="col-md-6 mb-3">
-        <label asp-for="MaxPeople" class="form-label"></label>
-        <input asp-for="MaxPeople" class="form-control" value="@Model.MaxPeople" />
-        <span asp-validation-for="MaxPeople" class="text-danger"></span>
-    </div>
-
-    <div class="col-md-6 mb-3">
-        <label asp-for="Status" class="form-label"></label>
-        <select asp-for="Status" class="form-select">
-            <option value="true" selected="@(Model.Status ? "selected" : null)">Active</option>
-            <option value="false" selected="@(!Model.Status ? "selected" : null)">Inactive</option>
-        </select>
-        <span asp-validation-for="Status" class="text-danger"></span>
-    </div>
-
-    <!-- Start Date -->
-    <div class="col-md-6 mb-3">
-        <label asp-for="StartDate" class="form-label"></label>
-        <input asp-for="StartDate" type="date" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
-        <span asp-validation-for="StartDate" class="text-danger"></span>
-    </div>
-
-    <!-- End Date -->
-    <div class="col-md-6 mb-3">
-        <label asp-for="EndDate" class="form-label"></label>
-        <input asp-for="EndDate" type="date" class="form-control" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
-        <span asp-validation-for="EndDate" class="text-danger"></span>
-    </div>
-
-    <!-- Description -->
-    <div class="col-12 mb-3">
-        <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" rows="4" class="form-control">@Model.Description</textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-
-    <!-- Hotel Dropdown -->
-    <div class="col-md-6 mb-3">
-        <label asp-for="HotelId" class="form-label">Hotel</label>
-        <select asp-for="HotelId" class="form-select">
-            <option value="">-- Select Hotel --</option>
-            @if (ViewBag.Hotels != null)
-            {
-                foreach (var hotel in ViewBag.Hotels)
-                {
-                    <option value="@hotel.Id" selected="@(Model.HotelId == hotel.Id ? "selected" : null)">@hotel.Name</option>
-                }
-            }
-        </select>
-        <span asp-validation-for="HotelId" class="text-danger"></span>
-    </div>
-
-    <!-- Additional Activity Dropdown -->
-    <div class="col-md-6 mb-3">
-        <label asp-for="AdditionalActivityId" class="form-label">Additional Activity</label>
-        <select asp-for="AdditionalActivityId" class="form-select">
-            <option value="">-- Select Activity --</option>
-            @if (ViewBag.Activities != null)
-            {
-                foreach (var activity in ViewBag.Activities)
-                {
-                    <option value="@activity.Id" selected="@(Model.AdditionalActivityId == activity.Id ? "selected" : null)">@activity.Place</option>
-                }
-            }
-        </select>
-        <span asp-validation-for="AdditionalActivityId" class="text-danger"></span>
-    </div>
-
-    <!-- Existing Main Image -->
-    <div class="col-md-6 mb-3">
-        <label class="form-label">Current Main Image</label>
-        @if (!string.IsNullOrEmpty(Model.ExistingMainImage))
-        {
-            <div>
-                <img src="~/images/trips/@Model.ExistingMainImage" alt="Main Image" class="img-thumbnail" style="max-width: 200px;" />
+                <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Scheduling & Logistics</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="StartDate" class="form-label fw-bold">Start Date</label>
+                            <input asp-for="StartDate" type="date" class="form-control" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="EndDate" class="form-label fw-bold">End Date</label>
+                            <input asp-for="EndDate" type="date" class="form-control" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="HotelId" class="form-label fw-bold">Assigned Hotel</label>
+                            <select asp-for="HotelId" class="form-select" asp-items="@(new SelectList(ViewBag.Hotels, "Id", "Name"))">
+                                <option value="">-- No Hotel --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="AdditionalActivityId" class="form-label fw-bold">Activity</label>
+                            <select asp-for="AdditionalActivityId" class="form-select" asp-items="@(new SelectList(ViewBag.Activities, "Id", "Place"))">
+                                <option value="">-- No Activity --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
-        }
-        else
-        {
-            <p>No main image uploaded.</p>
-        }
-    </div>
 
-    <!-- Main Image -->
-    <div class="col-md-6 mb-3">
-        <label asp-for="MainImage" class="form-label">Change Main Image</label>
-        <input asp-for="MainImage" type="file" class="form-control" accept="image/*" />
-    </div>
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-4 mb-4">
+                    <h5 class="fw-bold mb-3">Trip Status</h5>
+                    <select asp-for="Status" class="form-select form-select-lg mb-2">
+                        <option value="true">Active / Visible</option>
+                        <option value="false">Inactive / Hidden</option>
+                    </select>
+                    <small class="text-muted">Controls if travelers can see this trip.</small>
+                </div>
 
-    <!-- Existing Sub Images -->
-    <div class="col-md-6 mb-3">
-        <label class="form-label">Current Sub Images</label>
-        @if (Model.ExistingSupImages != null && Model.ExistingSupImages.Any())
-        {
-            <div class="d-flex flex-wrap">
-                @foreach (var img in Model.ExistingSupImages)
-                {
-                    <img src="~/images/trip-sup/@img.SupImg" alt="Sub Image" class="img-thumbnail me-2 mb-2" style="max-width: 100px;" />
-                }
+                <div class="card border-0 shadow-sm p-4">
+                    <h5 class="fw-bold mb-3">Trip Images</h5>
+
+                    <label class="form-label fw-bold small">Current Cover</label>
+                    <div class="mb-3">
+                        <img src="~/images/trips/@Model.ExistingMainImage" class="img-fluid rounded border mb-2" style="max-height: 150px; width: 100%; object-fit: cover;" />
+                        <input asp-for="MainImage" type="file" class="form-control form-control-sm" />
+                    </div>
+
+                    <label class="form-label fw-bold small">Gallery Preview</label>
+                    <div class="d-flex flex-wrap gap-1 mb-2">
+                        @foreach (var img in Model.ExistingSupImages)
+                        {
+                            <img src="~/images/trip-sup/@img.SupImg" class="rounded border" style="width: 50px; height: 50px; object-fit: cover;" />
+                        }
+                    </div>
+                    <input asp-for="SupImages" type="file" multiple class="form-control form-control-sm" />
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-3 mt-4 fw-bold shadow">
+                    <i class="bi bi-save me-2"></i> Save All Changes
+                </button>
             </div>
-        }
-        else
-        {
-            <p>No sub images uploaded.</p>
-        }
-    </div>
-
-    <!-- Sub Images -->
-    <div class="col-md-6 mb-3">
-        <label asp-for="SupImages" class="form-label">Add New Sub Images</label>
-        <input asp-for="SupImages" type="file" multiple class="form-control" />
-    </div>
-
-    <!-- Buttons -->
-    <div class="col-12 mt-4 text-center">
-        <button type="submit" class="btn btn-primary px-4">Save Changes</button>
-        <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
-    </div>
-
-</form>
+        </div>
+    </form>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .form-control, .form-select {
+            border: 1px solid #ced4da;
+            padding: 0.6rem 0.75rem;
+        }
+
+            .form-control:focus {
+                border-color: #0d6efd;
+                box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+            }
+
+        .card {
+            border-radius: 12px;
+        }
+    </style>
 }

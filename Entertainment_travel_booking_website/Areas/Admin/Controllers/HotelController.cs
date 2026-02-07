@@ -14,13 +14,16 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         private readonly IRepository<Hotel> _hotelRepository;
         private readonly IRepository<HotelSupImg> _hotelSupimageRepository;
         private readonly HotelSupimgIRepository _hotelSupImgsRepository;
+        private readonly IRepository<Room> _roomRepository;
 
         public HotelController(
             IRepository<Hotel> hotelRepository,
+            IRepository<Room> roomRepository,
             IRepository<HotelSupImg> hotelSupimageRepository,
             HotelSupimgIRepository hotelSupImgsRepository) 
         {
             _hotelRepository = hotelRepository;
+            _roomRepository = roomRepository;
             _hotelSupimageRepository = hotelSupimageRepository;
             _hotelSupImgsRepository = hotelSupImgsRepository;
         }
@@ -29,10 +32,12 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
             var hotels = await _hotelRepository.GetAsync(
-                includes: new Expression<Func<Hotel, object>>[] { h => h.HotelSupImgs },
+                includes: new Expression<Func<Hotel, object>>[] { h => h.HotelSupImgs,h=>h.Rooms },
                 tracked: false,
                 cancellationToken: cancellationToken
-            );
+            
+            
+    );
             return View(hotels);
         }
 
@@ -114,7 +119,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         {
             var hotel = await _hotelRepository.GetOneAsync(
                 h => h.Id == id,
-                includes: new Expression<Func<Hotel, object>>[] { h => h.HotelSupImgs },
+                includes: new Expression<Func<Hotel, object>>[] { h => h.HotelSupImgs, h=>h.Rooms },
                 cancellationToken: cancellationToken
             );
 
@@ -144,7 +149,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             // جلب الفندق مع الصور الفرعية
             var hotel = await _hotelRepository.GetOneAsync(
                 h => h.Id == hotelEditVM.Id,
-                includes: new Expression<Func<Hotel, object>>[] { h => h.HotelSupImgs },
+                includes: new Expression<Func<Hotel, object>>[] { h => h.HotelSupImgs, h=>h.Rooms },
                 cancellationToken: cancellationToken
             );
 

@@ -22,7 +22,7 @@ namespace Entertainment_travel_booking_website.DataBase
         //{
         //    base.OnConfiguring(optionsBuilder);
         //    optionsBuilder.UseSqlServer("Data Source=.;Initial catalog =Trips; Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");  base.OnConfiguring(optionsBuilder);
-        //    //optionsBuilder.UseSqlServer("Data Source=(localdb)\\ProjectModels;Initial Catalog=Trips;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+            //optionsBuilder.UseSqlServer("Data Source=(localdb)\\ProjectModels;Initial Catalog=Trips;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
         //}
 
         override protected void OnModelCreating(ModelBuilder modelBuilder)
