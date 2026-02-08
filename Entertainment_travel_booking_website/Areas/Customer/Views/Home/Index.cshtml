@@ -5,198 +5,146 @@
     var hotels = ViewBag.Hotels as IEnumerable<Hotel>;
 }
 @model IEnumerable<Trip>
-    ;
+
 <main class="w-[85%] max-w-[1400px] mx-auto px-4 py-20">
 
-        <section id="popular" class="mb-24">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-black text-gray-900 mb-4">وجهات شائعة</h2>
-                <p class="text-gray-500 font-bold italic">الوجهات التي يعشقها المسافرون هذا الموسم</p>
+    @* --- قسم الوجهات الشائعة --- *@
+    <section id="popular" class="mb-24">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-black text-gray-900 mb-4">وجهات شائعة</h2>
+            <p class="text-gray-500 font-bold italic">الوجهات التي يعشقها المسافرون هذا الموسم</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            @if (popularDestinations != null)
+            {
+                @foreach (var dest in popularDestinations)
+                {
+                    <div class="relative h-80 rounded-[2.5rem] overflow-hidden group destination-card shadow-lg cursor-pointer">
+                        <img src="~/images/trips/@dest.Image"
+                             asp-append-version="true"
+                             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                             onerror="this.src='https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?auto=format&fit=crop&w=400'">
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
+                            <h4 class="text-white text-xl font-black">@dest.Name</h4>
+                            <p class="text-blue-300 text-sm font-bold">@dest.Count رحلات متاحة</p>
+                        </div>
+                    </div>
+                }
+            }
+        </div>
+    </section>
+
+    @* --- الحاوية الأساسية للـ AJAX --- *@
+    <div id="trips-container">
+        <section id="trips" class="mb-24">
+            <div class="flex justify-between items-end mb-12">
+                <div>
+                    <h2 class="text-3xl font-black text-gray-900 mb-2">أحدث الرحلات المضافة</h2>
+                    <p class="text-gray-500 font-bold italic text-sm">كن أول من يحجز في عروضنا الجديدة</p>
+                </div>
             </div>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                @if (popularDestinations != null)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                @if (Model != null && Model.Any())
                 {
-                    @foreach (var dest in popularDestinations)
+                    @foreach (var trip in Model)
                     {
-                        <div class="relative h-80 rounded-[2.5rem] overflow-hidden group destination-card shadow-lg cursor-pointer">
-                            @* عرض الصورة من السيرفر *@
-                            <img src="~/images/@dest.Image"
-                                 class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                 onerror="this.src='https://images.unsplash.com/photo-1539367628448-4bc5c9d171c8?auto=format&fit=crop&w=400'">
+                        <div class="bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-50 group flex flex-col">
+                            <div class="relative h-56 overflow-hidden">
+                                <img src="~/images/trips/@trip.Image"
+                                     asp-append-version="true"
+                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                                     onerror="this.src='https://images.unsplash.com/photo-1506461883276-594a12b11cf3?auto=format&fit=crop&w=600'">
 
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent flex flex-col justify-end p-8">
-                                @* اسم المكان *@
-                                <h4 class="text-white text-xl font-black">@dest.Name</h4>
-                                @* عدد الرحلات *@
-                                <p class="text-blue-300 text-sm font-bold">@dest.Count رحلات متاحة</p>
+                                @if (trip.Status)
+                                {
+                                    <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">متاح</div>
+                                }
+                            </div>
+
+                            <div class="p-6 text-right flex flex-col flex-grow">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="text-orange-500 font-black text-xs">★ @(trip.Rate?.ToString("0.0") ?? "5.0")</span>
+                                    <span class="text-gray-400 text-[10px] font-bold italic">📍 @trip.Place</span>
+                                </div>
+
+                                <h3 class="text-lg font-black text-gray-900 mb-2 group-hover:text-blue-600 transition line-clamp-1">رحلة @trip.Place</h3>
+                                <p class="text-gray-500 text-xs leading-relaxed mb-4 line-clamp-2">@trip.Description</p>
+
+                                <div class="mt-auto border-t border-gray-50 pt-4 flex justify-between items-center">
+                                    <div>
+                                        <p class="text-[9px] text-gray-400 font-black uppercase">السعر</p>
+                                        <p class="text-lg font-black text-gray-900">@trip.Price.ToString("N0") <span class="text-[10px] font-bold">EGP</span></p>
+                                    </div>
+
+                                    <a asp-action="Details" asp-controller="Home" asp-route-id="@trip.Id"
+                                       class="bg-blue-600 text-white px-4 py-2 rounded-xl cursor-pointer text-sm font-black hover:bg-gray-900 transition shadow-md active:scale-95 text-center">
+                                        تفاصيل
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     }
                 }
             </div>
+
+            @* --- الباجينيشن (تأكد من وجود الكلاس pagination-link) --- *@
+            @if (ViewBag.TotalPages > 1)
+            {
+                <div class="flex justify-center items-center gap-2 mt-16">
+                    @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                    {
+                        <a href="@Url.Action("Index", new { page = i, destination = Context.Request.Query["destination"] })"
+                           class="pagination-link w-10 h-10 flex items-center justify-center rounded-xl font-black transition-all shadow-sm
+                           @(ViewBag.CurrentPage == i ? "bg-blue-600 text-white scale-110 shadow-blue-200" : "bg-white text-gray-400 hover:bg-gray-50 border border-gray-100")">
+                            @i
+                        </a>
+                    }
+                </div>
+            }
         </section>
-
-    <section id="trips" class="mb-24">
-        <div class="flex justify-between items-end mb-12">
-            <div>
-                <h2 class="text-3xl font-black text-gray-900 mb-2">أحدث الرحلات المضافة</h2>
-                <p class="text-gray-500 font-bold italic text-sm">كن أول من يحجز في عروضنا الجديدة</p>
-            </div>
-        </div>
-
-        @* عرض الرحلات *@
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            @if (Model != null && Model.Any())
-            {
-                @foreach (var trip in Model)
-                {
-                    <div class="bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-50 group flex flex-col">
-                        <div class="relative h-56 overflow-hidden">
-                            <img src="~/images/@trip.Image" class="w-full h-full object-cover group-hover:scale-110 transition duration-700"
-                                 onerror="this.src='https://images.unsplash.com/photo-1506461883276-594a12b11cf3?auto=format&fit=crop&w=600'">
-
-                            @if (trip.Status)
-                            {
-                                <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">متاح</div>
-                            }
-                        </div>
-
-                        <div class="p-6 text-right flex flex-col flex-grow">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-orange-500 font-black text-xs">★ @(trip.Rate?.ToString("0.0") ?? "5.0")</span>
-                                <span class="text-gray-400 text-[10px] font-bold italic">📍 @trip.Place</span>
-                            </div>
-
-                            <h3 class="text-lg font-black text-gray-900 mb-2 group-hover:text-blue-600 transition line-clamp-1">رحلة @trip.Place</h3>
-                            <p class="text-gray-500 text-xs leading-relaxed mb-4 line-clamp-2">@trip.Description</p>
-
-                            <div class="mt-auto border-t border-gray-50 pt-4 flex justify-between items-center">
-                                <div>
-                                    <p class="text-[9px] text-gray-400 font-black uppercase">السعر</p>
-                                    <p class="text-lg font-black text-gray-900">@trip.Price.ToString("N0") <span class="text-[10px] font-bold">EGP</span></p>
-                                </div>
-
-                                <a asp-action="Details" asp-controller="Home" asp-route-id="@trip.Id"
-                                   class="bg-blue-600 text-white px-4 py-2 rounded-xl cursor-pointer text-sm font-black hover:bg-gray-900 transition shadow-md active:scale-95 text-center">
-                                    تفاصيل
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            }
-            else
-            {
-                <div class="col-span-full text-center py-20 bg-gray-50 rounded-[2rem] border-2 border-dashed border-gray-200">
-                    <p class="text-gray-400 font-bold">عفواً، لا توجد رحلات تطابق بحثك حالياً.</p>
-                </div>
-            }
-        </div>
-
-        @* --- أزرار الباجينيشن (Pagination UI) --- *@
-        @if (ViewBag.TotalPages > 1)
-        {
-            <div class="flex justify-center items-center gap-2 mt-16">
-                @for (int i = 1; i <= ViewBag.TotalPages; i++)
-                {
-                    <a href="@Url.Action("Index", new {
-                page = i,
-                destination = Context.Request.Query["destination"],
-                startDate = Context.Request.Query["startDate"],
-                endDate = Context.Request.Query["endDate"],
-                maxPrice = Context.Request.Query["maxPrice"]
-            })#trips"
-                       class="w-10 h-10 flex items-center justify-center rounded-xl font-black transition-all shadow-sm
-                  @(ViewBag.CurrentPage == i
-                    ? "bg-blue-600 text-white scale-110 shadow-blue-200"
-                    : "bg-white text-gray-400 hover:bg-gray-50 border border-gray-100")">
-                        @i
-                    </a>
-                }
-            </div>
-        }
-    </section>
-    <section id="hotels" class="mb-24">
-        <div class="flex justify-between items-end mb-12">
-            <div>
-                <h2 class="text-3xl font-black text-gray-900 mb-2">فنادقنا الشريكة</h2>
-                <p class="text-gray-500 font-bold italic text-sm">استمتع بإقامة فاخرة في أفضل الفنادق المختارة</p>
-            </div>
-            <a href="#" class="text-blue-600 font-black border-b-2 border-blue-600 pb-1 hover:text-blue-800 transition text-sm">عرض كل الفنادق</a>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            @if (hotels != null)
-            {
-                @foreach (var hotel in hotels)
-                {
-                    <div class="group relative bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100">
-                        @* صورة الفندق *@
-                        <div class="relative h-64 overflow-hidden">
-                            <img src="~/images/@hotel.Image" class="w-full h-full object-cover group-hover:scale-110 transition duration-700"
-                                 onerror="this.src='https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=600'">
-
-                            @* السعر لكل ليلة *@
-                            <div class="absolute bottom-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-xl shadow-sm">
-                                <p class="text-blue-600 font-black text-sm">@hotel.PricePerNight?.ToString("N0") <span class="text-[10px] text-gray-500">ليلة</span></p>
-                            </div>
-                        </div>
-
-                        <div class="p-5 text-right">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="bg-orange-100 text-orange-600 text-[10px] font-black px-2 py-0.5 rounded-lg">★ @(hotel.Rate?.ToString("0.0") ?? "4.5")</span>
-                                <span class="text-gray-400 text-[10px] font-bold">📍 @hotel.Location</span>
-                            </div>
-
-                            <h3 class="text-lg font-black text-gray-900 mb-2">@hotel.Name</h3>
-
-                            @* الحالة *@
-                            <div class="flex items-center justify-end gap-1 mb-4">
-                                <span class="text-[10px] font-bold @(hotel.Availability ? "text-green-500" : "text-red-500")">
-                                    @(hotel.Availability ? "متاح للحجز" : "مكتمل العدد")
-                                </span>
-                                <div class="w-1.5 h-1.5 rounded-full @(hotel.Availability ? "bg-green-500" : "bg-red-500")"></div>
-                            </div>
-
-                            <a href="#" class="block w-full text-center py-2.5 bg-gray-50 hover:bg-blue-600 hover:text-white text-gray-900 rounded-xl text-xs font-black transition-colors border border-gray-100">
-                                عرض الغرف المتاحة
-                            </a>
-                        </div>
-                    </div>
-                }
-            }
-        </div>
-    </section>
-
-    <section id="why-us" class="py-20 bg-blue-600 rounded-[3rem] px-10 text-white">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl font-black mb-4">لماذا تختار TravelGo؟</h2>
-            <p class="text-blue-100 font-bold">نحن لا نقدم مجرد رحلة، بل نصنع لك ذكريات تدوم</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div class="text-center space-y-4">
-                <div class="bg-white/10 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 rotate-3">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
-                </div>
-                <h4 class="text-xl font-black">أمان كامل</h4>
-                <p class="text-blue-100 text-sm leading-relaxed">جميع رحلاتنا وخدماتنا تخضع لأعلى معايير السلامة والجودة العالمية.</p>
-            </div>
-            <div class="text-center space-y-4">
-                <div class="bg-white/10 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 -rotate-3 border-2 border-orange-400">
-                    <svg class="w-10 h-10 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </div>
-                <h4 class="text-xl font-black">أفضل الأسعار</h4>
-                <p class="text-blue-100 text-sm leading-relaxed">نضمن لك أفضل سعر في السوق مع عروض حصرية لن تجدها في مكان آخر.</p>
-            </div>
-            <div class="text-center space-y-4">
-                <div class="bg-white/10 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 rotate-6">
-                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                </div>
-                <h4 class="text-xl font-black">دعم 24/7</h4>
-                <p class="text-blue-100 text-sm leading-relaxed">فريقنا معك في كل خطوة من رحلتك للإجابة على جميع استفساراتك.</p>
-            </div>
-        </div>
-    </section>
-
+    </div>
 </main>
+
+@* --- الجافا سكريبت القاضي على الريلود --- *@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        // نستخدم document on عشان يفضل شغال حتى بعد تبديل المحتوى
+        $(document).on('click', '.pagination-link', function (e) {
+            e.preventDefault(); // وقف الريلود فوراً
+
+            var url = $(this).attr('href');
+            var container = $('#trips-container');
+
+            // تأثير بصري للتحميل
+            container.css('opacity', '0.3');
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                success: function (result) {
+                    // استخراج المحتوى الجديد فقط
+                    var html = $(result).find('#trips-container').html();
+                    container.html(html);
+
+                    // تحديث العنوان في المتصفح من غير ريلود
+                    window.history.pushState(null, '', url);
+
+                    container.css('opacity', '1');
+
+                    // سكرول ناعم لمكان الرحلات
+                    $('html, body').animate({
+                        scrollTop: container.offset().top - 80
+                    }, 400);
+                },
+                error: function () {
+                    container.css('opacity', '1');
+                    console.log("حدث خطأ في جلب البيانات.");
+                }
+            });
+        });
+    });
+</script>

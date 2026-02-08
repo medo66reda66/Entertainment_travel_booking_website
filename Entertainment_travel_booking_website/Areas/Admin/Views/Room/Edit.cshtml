@@ -1,0 +1,129 @@
+﻿@model Entertainment_travel_booking_website.modelVM.RoomVM
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Edit Room Details";
+}
+
+<div class="container-fluid">
+    <div class="mb-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-action="Index" class="text-decoration-none text-muted">Rooms</a></li>
+                <li class="breadcrumb-item active text-primary" aria-current="page">Edit Room #@Model.ID</li>
+            </ol>
+        </nav>
+        <div class="d-flex align-items-center">
+            <div class="bg-primary text-white rounded-3 p-3 me-3 shadow-sm">
+                <i class="bi bi-pencil-square fs-3"></i>
+            </div>
+            <div>
+                <h2 class="fw-bold text-dark mb-0">Update Room Information</h2>
+                <p class="text-muted mb-0">Modifying details for Room ID: <span class="badge bg-light text-dark border">@Model.ID</span></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-xl-10 col-lg-12">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="card-title mb-0 fw-bold text-primary">
+                        <i class="bi bi-info-circle me-2"></i>General Specifications
+                    </h5>
+                </div>
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Edit" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        <input type="hidden" asp-for="ID" />
+
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label asp-for="Type" class="form-label fw-bold small text-uppercase text-muted">Room Category</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0"><i class="bi bi-grid-3x3-gap text-primary"></i></span>
+                                    <select asp-for="Type" class="form-select bg-light border-0 shadow-none py-2">
+                                        <option value="Single">Single Room</option>
+                                        <option value="Double">Double Room</option>
+                                        <option value="Suite">Suite</option>
+                                        <option value="Deluxe">Deluxe Room</option>
+                                    </select>
+                                </div>
+                                <span asp-validation-for="Type" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label asp-for="locationInHotel" class="form-label fw-bold small text-uppercase text-muted">Exact Location / Floor</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-0"><i class="bi bi-geo-alt text-primary"></i></span>
+                                    <input asp-for="locationInHotel" class="form-control bg-light border-0 shadow-none py-2" placeholder="e.g. Floor 2, Room 204" />
+                                </div>
+                                <span asp-validation-for="locationInHotel" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <label asp-for="Description" class="form-label fw-bold small text-uppercase text-muted">Description & Amenities</label>
+                                <textarea asp-for="Description" class="form-control bg-light border-0 shadow-none" rows="5" placeholder="List room features like Wi-Fi, AC, King size bed..."></textarea>
+                                <span asp-validation-for="Description" class="text-danger small"></span>
+                            </div>
+
+                            <div class="col-12">
+                                <div class="p-4 rounded-4 @(Model.Availability ? "bg-light-success" : "bg-light-danger") border border-2 border-white shadow-sm">
+                                    <div class="form-check form-switch d-flex align-items-center">
+                                        <input class="form-check-input me-3" type="checkbox" asp-for="Availability" id="editSwitch" style="width: 3em; height: 1.5em;">
+                                        <div>
+                                            <label class="form-check-label fw-bold d-block fs-5" for="editSwitch">Room Availability Status</label>
+                                            <p class="text-muted mb-0 small">Toggle this to instantly show or hide this room from the search results.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-5 pt-4 border-top d-flex gap-3">
+                            <button type="submit" class="btn btn-primary px-5 py-3 shadow-sm fw-bold rounded-3">
+                                <i class="bi bi-save2 me-2"></i> Save Room Changes
+                            </button>
+                            <a asp-action="Index" class="btn btn-light px-5 py-3 fw-bold text-muted border rounded-3">
+                                Discard Changes
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <style>
+        .bg-light-success {
+            background-color: #e8fff3 !important;
+        }
+
+        .bg-light-danger {
+            background-color: #fff5f8 !important;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #fff !important;
+            border: 1px solid #009ef7 !important;
+            box-shadow: 0 0 0 0.25rem rgba(0, 158, 247, 0.1) !important;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: "›";
+            font-size: 1.2rem;
+            vertical-align: middle;
+        }
+
+        .form-check-input:checked {
+            background-color: #50cd89;
+            border-color: #50cd89;
+        }
+    </style>
+}

@@ -1,90 +1,164 @@
 ﻿@model IEnumerable<Entertainment_travel_booking_website.Models.Trip>
 
 @{
-    ViewData["Title"] = "Trips";
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Trips Management";
 }
 
-<h2>Trips</h2>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-0 text-dark">Trips & Expeditions</h2>
+        <p class="text-muted mb-0">Manage travel packages, pricing, and destination schedules</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary px-4 shadow-sm fw-bold">
+        <i class="bi bi-plus-lg me-2"></i>Add New Trip
+    </a>
+</div>
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Add New Trip</a>
-</p>
-
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>Place</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Price</th>
-            <th>Discounted Price</th>
-            <th>Available Seats</th>
-            <th>Status</th>
-            <th>Hotel</th>
-            <th>Additional Activity</th>
-            <th>Main Image</th>
-            <th>Sub Images</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var trip in Model)
-        {
+<div class="table-responsive">
+    <table class="table align-middle table-hover bg-white shadow-sm" style="border-radius: 12px; overflow: hidden;">
+        <thead class="bg-light">
             <tr>
-                <td>@trip.Place</td>
-                <td>@trip.StartDate.ToString("yyyy-MM-dd")</td>
-                <td>@trip.EndDate.ToString("yyyy-MM-dd")</td>
-                <td>@trip.Price.ToString("C")</td>
-                <td>@(trip.DiscountedPrice.HasValue? trip.DiscountedPrice.Value.ToString("C") : "-")</td>
-                <td>@trip.AvailableSeats</td>
-                <td>@(trip.Status ? "Active" : "Inactive")</td>
-
-                <td>@trip.Hotel?.Name ?? "N/A"</td>
-                <td>@trip.AdditionalActivity?.Place ?? "N/A"</td>
-
-                <td>
-                    @if (!string.IsNullOrEmpty(trip.Image))
-                    {
-                        <img src="~/images/trips/@trip.Image"
-                             alt="@trip.Place"
-                             width="100" />
-                    }
-                </td>
-
-                <td>
-                    @if (trip.TripSupimages != null && trip.TripSupimages.Any())
-                    {
-                        <div class="d-flex flex-wrap gap-1">
-                            @foreach (var img in trip.TripSupimages)
-                            {
-                                <img src="~/images/trip-sup/@img.SupImg"
-                                     width="50"
-                                     height="50"
-                                     class="rounded border"
-                                     style="object-fit:cover;" />
-                            }
-                        </div>
-                    }
-                    else
-                    {
-                        <span class="text-muted">No Images</span>
-                    }
-                </td>
-
-                <td>
-                    <a asp-action="Edit"
-                       asp-route-id="@trip.Id"
-                       class="btn btn-sm btn-warning">Edit</a>
-
-                    <a asp-action="Details"
-                       asp-route-id="@trip.Id"
-                       class="btn btn-sm btn-info">Details</a>
-
-                    <a asp-action="Delete"
-                       asp-route-id="@trip.Id"
-                       class="btn btn-sm btn-danger">Delete</a>
-                </td>
+                <th class="border-0 ps-4 py-3 text-muted small fw-bold text-uppercase">Destination</th>
+                <th class="border-0 py-3 text-muted small fw-bold text-uppercase">Duration</th>
+                <th class="border-0 py-3 text-muted small fw-bold text-uppercase">Pricing</th>
+                <th class="border-0 py-3 text-muted small fw-bold text-uppercase">Capacity</th>
+                <th class="border-0 py-3 text-muted small fw-bold text-uppercase text-center">Status</th>
+                <th class="border-0 py-3 text-muted small fw-bold text-uppercase">Accommodation</th>
+                <th class="border-0 py-3 text-end pe-4 text-muted small fw-bold text-uppercase">Actions</th>
             </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var trip in Model)
+                {
+                    <tr>
+                        <td class="ps-4 py-3">
+                            <div class="d-flex align-items-center">
+                                @if (!string.IsNullOrEmpty(trip.Image))
+                                {
+                                    <img src="~/images/trips/@trip.Image" alt="@trip.Place"
+                                         class="rounded-3 shadow-sm me-3"
+                                         style="width: 55px; height: 55px; object-fit: cover;" />
+                                }
+                                <div>
+                                    <span class="text-dark fw-bold d-block fs-6">@trip.Place</span>
+                                    <div class="d-flex overflow-hidden mt-1">
+                                        @if (trip.TripSupimages != null)
+                                        {
+                                            foreach (var img in trip.TripSupimages.Take(3))
+                                            {
+                                                <img src="~/images/trip-sup/@img.SupImg"
+                                                     class="rounded-circle border border-white border-2"
+                                                     style="width: 22px; height: 22px; object-fit: cover; margin-left: -8px;" />
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            <div class="small fw-bold text-dark">@trip.StartDate.ToString("MMM dd") - @trip.EndDate.ToString("MMM dd")</div>
+                            <small class="text-muted text-uppercase" style="font-size: 10px;">@trip.StartDate.Year</small>
+                        </td>
+
+                        <td>
+                            @if (trip.DiscountedPrice.HasValue)
+                            {
+                                <div class="fw-bold text-primary">@trip.DiscountedPrice.Value.ToString("C")</div>
+                                <small class="text-decoration-line-through text-muted" style="font-size: 11px;">@trip.Price.ToString("C")</small>
+                            }
+                            else
+                            {
+                                <div class="fw-bold text-dark">@trip.Price.ToString("C")</div>
+                            }
+                        </td>
+
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <span class="fw-bold me-2">@trip.AvailableSeats</span>
+                                <div class="progress w-50px" style="height: 6px; width: 60px;">
+                                    <div class="progress-bar bg-info" style="width: 70%"></div>
+                                </div>
+                            </div>
+                            <small class="text-muted" style="font-size: 11px;">Available Seats</small>
+                        </td>
+
+                        <td class="text-center">
+                            @if (trip.Status)
+                            {
+                                <span class="badge bg-light-success text-success px-3 py-2 rounded-pill border border-success small">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-light-danger text-danger px-3 py-2 rounded-pill border border-danger small">Closed</span>
+                            }
+                        </td>
+
+                        <td>
+                            <div class="d-flex flex-column">
+                                <span class="small text-dark fw-medium"><i class="bi bi-building me-1"></i> @(trip.Hotel?.Name ?? "No Hotel")</span>
+                                <span class="small text-muted" style="font-size: 11px;"><i class="bi bi-geo me-1"></i> @(trip.AdditionalActivity?.Place ?? "None")</span>
+                            </div>
+                        </td>
+
+                        <td class="text-end pe-4">
+                            <div class="dropdown">
+                                <button class="btn btn-light btn-sm shadow-none" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2">
+                                    <li><a class="dropdown-item rounded py-2" asp-action="Edit" asp-route-id="@trip.Id"><i class="bi bi-pencil me-2 text-primary"></i> Edit</a></li>
+                                    <li><a class="dropdown-item rounded py-2 text-info" asp-action="Details" asp-route-id="@trip.Id"><i class="bi bi-eye me-2"></i> Details</a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item rounded py-2 text-danger" asp-action="Delete" asp-route-id="@trip.Id" onclick="return confirm('Delete this trip?');"><i class="bi bi-trash3 me-2"></i> Delete</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center py-5">
+                        <i class="bi bi-airplane text-muted display-4"></i>
+                        <p class="mt-2 text-muted">No trips available. Start by adding one!</p>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <style>
+        .bg-light-success {
+            background-color: #e8fff3 !important;
         }
-    </tbody>
-</table>
+
+        .bg-light-danger {
+            background-color: #fff5f8 !important;
+        }
+
+        .table tbody tr {
+            transition: all 0.2s;
+        }
+
+            .table tbody tr:hover {
+                background-color: #fcfcfc !important;
+                transform: translateY(-1px);
+            }
+
+        .dropdown-item {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .w-50px {
+            width: 50px;
+        }
+    </style>
+}
