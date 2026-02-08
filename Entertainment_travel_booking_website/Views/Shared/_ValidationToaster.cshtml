@@ -1,0 +1,15 @@
+﻿@section Scripts{
+
+    @if (@TempData["sucess-Notification"] is not null)
+    {
+        <script>
+            toastr.success['@TempData["sucess-Notification"]'];
+        </script>
+    }
+    else if (@TempData["error-Notification"] is not null)
+    {
+        <script>
+            toastr.error['@TempData["error-Notification"]'];
+        </script>
+    }
+}

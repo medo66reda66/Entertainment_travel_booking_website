@@ -4,7 +4,9 @@
 @{
     ViewData["Title"] = "ResendEmailConfirm";
 }
-
+@{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
 <div class="container">
     <h1>ResendEmailConfirm</h1>
 

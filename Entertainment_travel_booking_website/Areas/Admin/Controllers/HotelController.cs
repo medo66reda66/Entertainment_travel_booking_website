@@ -104,7 +104,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
                     }
                     await _hotelSupimageRepository.CommitAsync(cancellationToken);
                 }
-       
+                TempData["sucess-Notification"] = "Hotel Created Successfully";
             }
             catch (Exception ex)
             {
@@ -221,10 +221,11 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
                 await _hotelSupimageRepository.CommitAsync(cancellationToken);
             }
-
+    
             // حفظ التحديثات
             _hotelRepository.Update(hotel);
             await _hotelRepository.CommitAsync(cancellationToken);
+            TempData["sucess-Notification"] = "Hotel Edit Successfully";
 
             return RedirectToAction("Index");
         }
@@ -271,6 +272,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             // حذف الفندق نفسه
             _hotelRepository.Delete(hotel);
             await _hotelRepository.CommitAsync(cancellationToken);
+            TempData["sucess-Notification"] = "Hotel Delete Successfully";
 
             return RedirectToAction("Index");
         }

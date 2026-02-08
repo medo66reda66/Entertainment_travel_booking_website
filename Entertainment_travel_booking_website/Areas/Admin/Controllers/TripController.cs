@@ -128,6 +128,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
                     await _tripSupimageRepository.CommitAsync(cancellationtoken);
                 }
+                TempData["sucess-Notification"] = "Trip Create Successfully";
             }
             catch (Exception ex)
             {
@@ -255,6 +256,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
             _tripRepository.Update(trip);
             await _tripRepository.CommitAsync(cancellationToken);
+            TempData["sucess-Notification"] = "Trip Edit Successfully";
 
             return RedirectToAction("Index");
         }
@@ -300,6 +302,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             // حذف الرحلة نفسها
             _tripRepository.Delete(trip);
             await _tripRepository.CommitAsync(cancellationToken);
+            TempData["sucess-Notification"] = "Trip Delete Successfully";
 
             return RedirectToAction(nameof(Index));
         }

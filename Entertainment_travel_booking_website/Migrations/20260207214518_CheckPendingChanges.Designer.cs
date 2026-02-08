@@ -4,6 +4,7 @@ using Entertainment_travel_booking_website.DataBase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entertainment_travel_booking_website.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260207214518_CheckPendingChanges")]
+    partial class CheckPendingChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +43,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasIndex("AdditianActivitiesId");
 
-                    b.ToTable("activitiesSupImgs", (string)null);
+                    b.ToTable("activitiesSupImgs");
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.AdditianActivities", b =>
@@ -66,7 +69,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("additianActivites", (string)null);
+                    b.ToTable("additianActivites");
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.ApplicationUser", b =>
@@ -171,7 +174,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.ToTable("ApplicationUserOtps", (string)null);
+                    b.ToTable("ApplicationUserOtps");
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.Hotel", b =>
@@ -206,7 +209,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("hotels", (string)null);
+                    b.ToTable("hotels");
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.HotelSupImg", b =>
@@ -224,7 +227,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("hotelSupImgs", (string)null);
+                    b.ToTable("hotelSupImgs");
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.Room", b =>
@@ -255,7 +258,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("rooms", (string)null);
+                    b.ToTable("rooms");
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.Trip", b =>
@@ -313,7 +316,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasIndex("HotelId");
 
-                    b.ToTable("trips", (string)null);
+                    b.ToTable("trips");
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.TripAdditianActivities", b =>
@@ -331,7 +334,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasIndex("additianActivitiesId");
 
-                    b.ToTable("tripAdditianActivities", (string)null);
+                    b.ToTable("tripAdditianActivities");
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.TripSupimage", b =>
@@ -346,7 +349,7 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     b.HasIndex("TripId");
 
-                    b.ToTable("tripSupimages", (string)null);
+                    b.ToTable("tripSupimages");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
