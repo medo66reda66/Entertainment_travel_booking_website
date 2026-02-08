@@ -23,6 +23,7 @@ namespace Entertainment_travel_booking_website.Areas.Identity.Controllers
             _emailSender = emailSender;
             _otpRepository = otpRepository;
         }
+
         public IActionResult Register()
         {
             return View();
@@ -58,8 +59,10 @@ namespace Entertainment_travel_booking_website.Areas.Identity.Controllers
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
+                TempData["error-Notification"] = "Registration failed! Please try again.";
                 return View(registerVM);
             }
+            TempData["sucess-Notification"] = "Registration successful! Please check your email to confirm your account.";
             return RedirectToAction(nameof(Login));
         }
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
@@ -73,11 +76,14 @@ namespace Entertainment_travel_booking_website.Areas.Identity.Controllers
             if (!result.Succeeded)
             {
                 ModelState.AddModelError(string.Empty, "Email confirmation failed. Please try again.");
+                TempData["error-Notification"] = "Email Confirm Failed";
             }
             else
             {
                 ModelState.AddModelError(string.Empty, "Email confirm");
+                TempData["sucess-Notification"] = "Email Confirm Successfully";
             }
+            TempData["sucess-Notification"] = "Email Confirm Successfully! Please log in.";
 
             return RedirectToAction("index", "Home", new { area = "Customer" });
         }
@@ -97,12 +103,14 @@ namespace Entertainment_travel_booking_website.Areas.Identity.Controllers
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "No user found with this email.");
+                TempData["error-Notification"] = "No user found with this email.";
                 return View(resendEmailConfirmVM);
             }
 
             if (user.EmailConfirmed)
             {
                 ModelState.AddModelError(string.Empty, "This email is already confirmed. Please log in.");
+                TempData["error-Notification"] = "This email is already confirmed. Please log in.";
                 return View(resendEmailConfirmVM);
             }
 
@@ -112,7 +120,7 @@ namespace Entertainment_travel_booking_website.Areas.Identity.Controllers
             await _emailSender.SendEmailAsync(user.Email!,
                  "Confirm your Resent email", $"Please confirm your account by clicking this link: <a href='{link}'>Confirm Email</a>");
 
-
+            TempData["sucess-Notification"] = "Confirmation email resent! Please check your email to confirm your account.";
             return View(resendEmailConfirmVM);
         }
         [HttpGet]
@@ -158,6 +166,8 @@ namespace Entertainment_travel_booking_website.Areas.Identity.Controllers
 
             await _emailSender.SendEmailAsync(user.Email!,
                  "Reset Password", $"Please reset your password The Otp: {OTP}</a>");
+
+            TempData["sucess-Notification"] = "OTP sent to your email! Please check your email to reset your password.";
             return RedirectToAction("ValidateOtp", new { userid = user.Id });
         }
         [HttpGet]
@@ -185,6 +195,8 @@ namespace Entertainment_travel_booking_website.Areas.Identity.Controllers
             validOtp.isvalid = false;
             _otpRepository.Update(validOtp);
             await _otpRepository.CommitAsync(cancellationToken);
+
+            TempData["sucess-Notification"] = "OTP validated successfully! Please set your new password.";
             return RedirectToAction(nameof(NewPassword), new { userid = validateOtp.ApplicationUserId });
         }
         [HttpGet]
@@ -217,9 +229,11 @@ namespace Entertainment_travel_booking_website.Areas.Identity.Controllers
                 foreach (var error in result.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
+                    TempData["error-Notification"] = "Password reset failed! Please try again.";
                 }
                 return View(newPassword);
             }
+            TempData["sucess-Notification"] = "Password reset successfully! Please log in with your new password.";
             return RedirectToAction(nameof(Login));
         }
         [HttpGet]
@@ -249,25 +263,30 @@ namespace Entertainment_travel_booking_website.Areas.Identity.Controllers
                 if (result.IsLockedOut)
                 {
                     ModelState.AddModelError(string.Empty, "Your account is locked out. Please try again later.");
+                    TempData["error-Notification"] = "Your account is locked out. Please try again later.";
                     return View(loginVM);
                 }
                 else if (!user.EmailConfirmed)
                 {
                     ModelState.AddModelError(string.Empty, "You need to confirm your email before logging in. Please check your email for the confirmation link.");
+                    TempData["error-Notification"] = "You need to confirm your email before logging in. Please check your email for the confirmation link.";
                     return View(loginVM);
                 }
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Invalid login attempt. Please check your email and password.");
+                        TempData["error-Notification"] = "Invalid login attempt. Please check your email and password.";
                     return View(loginVM);
                 }
             }
+            TempData["sucess-Notification"] = "Logged in successfully!";
             return RedirectToAction("Index", "Home", new { area = "Customer" });
         }
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
+            TempData["sucess-Notification"] = "Logged out successfully!";
             return RedirectToAction(nameof(Login));
         }
     }

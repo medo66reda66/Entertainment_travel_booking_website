@@ -64,6 +64,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
             await _roomRepo.AddAsync(room, cancellationToken);
             await _roomRepo.CommitAsync(cancellationToken);
+            TempData["sucess-Notification"] = "Room Create Successfully";
             return RedirectToAction(nameof(Index));
         }
 
@@ -101,6 +102,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
             _roomRepo.Update(room);
             await _roomRepo.CommitAsync(cancellationToken);
+            TempData["sucess-Notification"] = "Room Edit Successfully";
 
             return RedirectToAction(nameof(Index));
         }
@@ -114,6 +116,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
             _roomRepo.Delete(room);
             await _roomRepo.CommitAsync();
+            TempData["sucess-Notification"] = "Room Delete Successfully";
             return RedirectToAction(nameof(Index));
 
         }

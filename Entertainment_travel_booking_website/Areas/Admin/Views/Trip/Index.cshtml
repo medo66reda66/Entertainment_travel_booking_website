@@ -4,6 +4,21 @@
     Layout = "_AdminLayout";
     ViewData["Title"] = "Trips Management";
 }
+@section Scripts {
+
+    @if (TempData["sucess-Notification"] != null)
+    {
+        <script>
+            toastr.success('@TempData["sucess-Notification"]');
+        </script>
+    }
+    else if (TempData["error-Notification"] != null)
+    {
+        <script>
+            toastr.error('@TempData["error-Notification"]');
+        </script>
+    }
+}
 
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
@@ -133,7 +148,6 @@
     </table>
 </div>
 
-@section Scripts {
     <style>
         .bg-light-success {
             background-color: #e8fff3 !important;
@@ -161,4 +175,3 @@
             width: 50px;
         }
     </style>
-}

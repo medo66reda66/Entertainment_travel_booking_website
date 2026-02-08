@@ -82,6 +82,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             }
 
             await _activitiesRepo.AddAsync(activity);
+            TempData["sucess-Notification"] = "Activity Create Successfully";
 
             return RedirectToAction(nameof(Index));
         }
@@ -154,6 +155,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             }
 
             await _activitiesRepo.UpdateAsync(activity);
+            TempData["sucess-Notification"] = "Activity Edit Successfully";
 
             return RedirectToAction(nameof(Index));
         }
@@ -190,6 +192,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
           
             await _activitiesRepo.DeleteAsync(activity.Id);
+            TempData["sucess-Notification"] = "Activity Delete Successfully";
 
             return RedirectToAction(nameof(Index));
         }
