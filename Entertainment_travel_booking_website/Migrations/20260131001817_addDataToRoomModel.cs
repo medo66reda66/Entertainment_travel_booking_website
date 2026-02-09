@@ -10,6 +10,7 @@ namespace Entertainment_travel_booking_website.Migrations
         
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            
             migrationBuilder.InsertData(
                 table: "rooms", // تأكد لو اسم الجدول عندك "Room" شيل حرف الـ s
                 columns: new[] { "ID", "Description", "Type", "locationInHotel", "Availability" },
