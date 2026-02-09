@@ -10,6 +10,7 @@ namespace Entertainment_travel_booking_website.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            
             migrationBuilder.InsertData(
                 table: "hotels", // اتأكد من اسم الـ DbSet عندك (Hotels ولا Hotel؟)
                 columns: new[] { "Id", "Name", "Location", "PricePerNight", "Description", "Image", "Availability", "Rate" },
