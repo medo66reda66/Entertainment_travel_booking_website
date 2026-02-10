@@ -44,6 +44,7 @@ namespace Entertainment_travel_booking_website.Areas.Identity.Controllers
                 lastName = registerVM.Lastname,
                 Address = registerVM.Address,
                 UserName = registerVM.Email,
+                PhoneNumber = registerVM.Phone, 
                 Email = registerVM.Email
             };
             var result = await _userManager.CreateAsync(user, registerVM.Password);
@@ -86,7 +87,7 @@ namespace Entertainment_travel_booking_website.Areas.Identity.Controllers
             }
             TempData["sucess-Notification"] = "Email Confirm Successfully! Please log in.";
 
-            return RedirectToAction("index", "Home", new { area = "Customer" });
+            return RedirectToAction(nameof(Login));
         }
         public IActionResult ResendEmailConfirm()
         {
