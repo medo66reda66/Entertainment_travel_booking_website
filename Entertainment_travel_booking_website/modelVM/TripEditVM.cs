@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Entertainment_travel_booking_website.Models;
+using System.Collections.Generic;
 
 namespace Entertainment_travel_booking_website.modelVM
 {
@@ -17,7 +18,12 @@ namespace Entertainment_travel_booking_website.modelVM
         public string? Description { get; set; }
 
         public int? HotelId { get; set; }
-        public int? AdditionalActivityId { get; set; }
+
+        // ❌ شيل دي
+        // public int? AdditionalActivityId { get; set; }
+
+        // ✅ اختيارات متعددة
+        public List<int> SelectedActivityIds { get; set; } = new();
 
         // صور جديدة
         public IFormFile? MainImage { get; set; }

@@ -3,13 +3,17 @@
     public class AdditianActivities
     {
         public int Id { get; set; }
-        public string Place { get; set; }=string.Empty;
-        public string? Description { get; set; }=string.Empty;
+        public string Place { get; set; } = string.Empty;
+        public string? Description { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public DateTime Date { get; set; }
-        public List<Trip>? Trips { get; set; }
-        //public string MainImage { get; set; }
+
+      
+        public ICollection<TripAdditianActivities> TripAdditianActivities { get; set; }
+            = new List<TripAdditianActivities>();
+
         public List<ActivitiesSupImg>? ActivitiesSupImgs { get; set; }
+        public string? MainImg { get; set; }
 
     }
 }

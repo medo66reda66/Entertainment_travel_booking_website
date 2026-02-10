@@ -1,0 +1,76 @@
+﻿@model Entertainment_travel_booking_website.Models.AdditianActivities
+@{
+    Layout = "_Layout";
+}
+
+<main class="w-[85%] max-w-[1400px] mx-auto px-4 py-20 space-y-12">
+
+    <h2 class="text-3xl font-black text-center">@Model.Place</h2>
+
+    <div class="flex flex-col items-center space-y-4">
+
+        <!-- الصورة الرئيسية: أول صورة في Sub Images أو صورة افتراضية -->
+        <img id="activityMainImg"
+             src="@Url.Content(Model.ActivitiesSupImgs.FirstOrDefault()?.SupImg == null ? "~/images/default-activity.jpg" : "~/images/additionalActivities/" + Model.ActivitiesSupImgs.First().SupImg)"
+             class="w-full max-w-3xl h-96 object-cover rounded shadow mb-4" />
+
+        <!-- الصور الفرعية -->
+        <div class="flex gap-3 overflow-x-auto py-2 px-1 scrollbar-hide">
+            @foreach (var img in Model.ActivitiesSupImgs)
+            {
+                <img src="@Url.Content(string.IsNullOrEmpty(img.SupImg) ? "~/images/default-activity.jpg" : "~/images/additionalActivities/" + img.SupImg)"
+                     class="w-32 h-24 object-cover rounded shadow-lg cursor-pointer hover:scale-110 transition-transform activity-subimg" />
+            }
+        </div>
+    </div>
+
+    <section class="mt-6 space-y-2">
+        <p class="text-lg text-gray-700">@Model.Description</p>
+        <p class="text-green-600 font-semibold text-xl">السعر: $@Model.Price</p>
+
+        <div class="mt-4">
+            <label class="inline-flex items-center gap-2">
+                <input type="checkbox" id="activityCheckbox" data-price="@Model.Price" class="form-checkbox h-5 w-5 text-green-600">
+                إضافة النشاط للسعر الكلي
+            </label>
+        </div>
+
+        <p class="mt-2 font-bold text-lg">السعر الكلي: $<span id="totalActivityPrice">@Model.Price</span></p>
+    </section>
+</main>
+
+<script>
+    (function() {
+        const activityMainImg = document.getElementById('activityMainImg');
+        document.querySelectorAll('.activity-subimg').forEach(img => {
+            img.addEventListener('click', () => {
+                activityMainImg.src = img.src; // تغيير الصورة الرئيسية عند الضغط على أي صورة فرعية
+            });
+        });
+
+        const checkbox = document.getElementById('activityCheckbox');
+        const totalEl = document.getElementById('totalActivityPrice');
+        let basePrice = parseFloat(@Model.Price);
+
+        checkbox.addEventListener('change', () => {
+            // لو محدد: السعر الكلي = السعر + السعر الأساسي (يمكن تغييره حسب منطقك)
+            totalEl.textContent = checkbox.checked ? (basePrice + basePrice).toFixed(2) : basePrice.toFixed(2);
+        });
+    })();
+</script>
+
+<style>
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .activity-subimg:hover {
+        transform: scale(1.1);
+        transition: transform 0.3s;
+    }
+</style>

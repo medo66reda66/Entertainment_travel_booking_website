@@ -67,6 +67,8 @@ namespace Entertainment_travel_booking_website
             builder.Services.AddScoped<IRepository<ActivitiesSupImg>, Repository<ActivitiesSupImg>>();
             builder.Services.AddScoped<IAdditionalActivitySubImageRepository, AdditionalActivitySubImageRepository>();
             builder.Services.AddScoped<IAdditianActivitiesRepository, AdditianActivitiesRepository>();
+            // Cart
+            builder.Services.AddScoped<ICartRepository, CartRepository>();
 
             // External Login With Google
             builder.Services.AddAuthentication()

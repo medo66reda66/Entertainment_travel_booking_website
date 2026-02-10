@@ -1,81 +1,164 @@
 ﻿using Entertainment_travel_booking_website.DataBase;
 using Entertainment_travel_booking_website.Models;
+using Entertainment_travel_booking_website.Models.ViewModels;
+using Entertainment_travel_booking_website.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
-namespace Entertainment_travel_booking_website.Areas.Home.Controllers
+namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
 {
     [Area("Customer")]
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly ApplicationDbContext _Context ;
-        public HomeController(ILogger<HomeController> logger,ApplicationDbContext context)
+        private readonly ApplicationDbContext _Context;
+        private readonly ICartRepository _cartRepo;
+
+        public HomeController(ApplicationDbContext context, ICartRepository cartRepo)
         {
-            _logger = logger;
             _Context = context;
+            _cartRepo = cartRepo;
         }
-        public IActionResult Index(string? destination, DateTime? startDate, DateTime? endDate, decimal? maxPrice, int page = 1)
+
+        // ------------------- الصفحة الرئيسية + Pagination -------------------
+        public IActionResult Index(int page = 1, string? destination = null, decimal? minPrice = null, decimal? maxPrice = null, int? hotelId = null, bool? available = null)
         {
-           
-            var trips = _Context.trips.AsNoTracking().AsQueryable();
+            int pageSize = 8;
+            var query = _Context.trips.Include(t => t.Hotel).AsQueryable();
 
-           
+            // ======== فلترة الوجهة ========
             if (!string.IsNullOrEmpty(destination))
-            {
-                trips = trips.Where(t => t.Place.Contains(destination));
-            }
+                query = query.Where(t => t.Place.Contains(destination));
 
-            if (maxPrice.HasValue && maxPrice > 0)
-            {
-                trips = trips.Where(t => t.Price <= maxPrice.Value);
-            }
+            // ======== فلترة السعر ========
+            if (minPrice.HasValue)
+                query = query.Where(t => t.Price >= minPrice.Value);
 
-            if (startDate.HasValue)
-            {
-                trips = trips.Where(t => t.StartDate.Date >= startDate.Value.Date);
-            }
+            if (maxPrice.HasValue)
+                query = query.Where(t => t.Price <= maxPrice.Value);
 
-            if (endDate.HasValue)
-            {
-                trips = trips.Where(t => t.EndDate.Date <= endDate.Value.Date);
-            }
+            // ======== فلترة الفندق ========
+            if (hotelId.HasValue)
+                query = query.Where(t => t.Hotel != null && t.Hotel.Id == hotelId.Value);
 
-           
-            int pageSize = 4;
-            var totalTrips = trips.Count();
+            // ======== فلترة متاح فقط ========
+            if (available.HasValue && available.Value)
+                query = query.Where(t => t.Status == true);
 
+            // ======== Pagination ========
+            var totalItems = query.Count();
+            var trips = query
+                .OrderByDescending(t => t.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
-            ViewBag.TotalPages = (int)Math.Ceiling(totalTrips / (double)pageSize);
             ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
-           
-            var filteredTrips = trips.AsNoTracking()
-                                     .OrderByDescending(t => t.Id) 
-                                     .Skip((page - 1) * pageSize)
-                                     .Take(pageSize)
-                                     .ToList();
-
-           
-            ViewBag.Hotels = _Context.hotels.AsNoTracking().Take(4).ToList();
-
-         
+            // ======== الوجهات الشائعة ========
             ViewBag.PopularDestinations = _Context.trips
                 .GroupBy(t => t.Place)
-                .Select(g => new
-                {
-                    Name = g.Key,
-                    Count = g.Count(),
-                    Image = g.FirstOrDefault() != null ? g.FirstOrDefault().Image : ""
-                })
-                .OrderByDescending(g => g.Count)
+                .Select(g => new { Name = g.Key, Count = g.Count(), Image = g.First().Image })
                 .Take(4)
                 .ToList();
 
-          
-            return View(filteredTrips);
+            // ======== قائمة الفنادق للفلتر ========
+            ViewBag.Hotels = _Context.hotels.ToList();
+
+            return View(trips);
+        }
+
+        // ------------------- تفاصيل الرحلة -------------------
+        public IActionResult Detail(int id)
+        {
+            var trip = _Context.trips
+                .Include(t => t.TripSupimages)
+                .Include(t => t.Hotel)
+                    .ThenInclude(h => h.HotelSupImgs)
+                .FirstOrDefault(t => t.Id == id);
+
+            if (trip == null) return NotFound();
+
+            var activities = _Context.additianActivites
+                .Include(a => a.ActivitiesSupImgs)
+                .Where(a => a.TripAdditianActivities.Any(t => t.tripId == id))
+                .ToList();
+
+            foreach (var act in activities)
+            {
+                act.MainImg = act.ActivitiesSupImgs?.FirstOrDefault()?.SupImg ?? "default-activity.jpg";
+            }
+
+            var vm = new TripDetailVM
+            {
+                Trip = trip,
+                Hotel = trip.Hotel,
+                AdditionalActivities = activities,
+                TotalPrice = trip.Price
+            };
+
+            return View(vm);
+        }
+        public IActionResult ActivityDetail(int id)
+        {
+            var activity = _Context.additianActivites
+                .Include(a => a.ActivitiesSupImgs)
+                .FirstOrDefault(a => a.Id == id);
+
+            if (activity == null) return NotFound();
+
+            return View(activity);
+        }
+
+        // ------------------- صفحة Cart -------------------
+        [HttpGet]
+        public IActionResult Cart()
+        {
+            var userId = User.Identity?.Name ?? "guest";
+            // الـ Include مهم جداً هنا عشان الداتا تظهر في الجدول
+            var cartItems = _cartRepo.GetCartItems(userId);
+            return View(cartItems);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddToCart(int TripId, List<int> SelectedActivityIds)
+        {
+            // 1. تحديد هوية المستخدم (لو مش مسجل دخول بنستخدم guest)
+            var userId = User.Identity?.Name ?? "guest";
+
+            // 2. جلب بيانات الرحلة والأنشطة لحساب السعر (أو الحساب داخل الـ Repository)
+            var trip = _Context.trips.FirstOrDefault(t => t.Id == TripId);
+            if (trip == null) return NotFound();
+
+            var activities = _Context.additianActivites
+                .Where(a => SelectedActivityIds.Contains(a.Id))
+                .ToList();
+
+            decimal totalPrice = trip.Price + activities.Sum(a => a.Price);
+
+            // 3. الحفظ في قاعدة البيانات عن طريق الـ Repository
+            // تأكد أن ميثود AddToCart داخل الـ Repository تحتوي على _context.SaveChanges()
+            _cartRepo.AddToCart(userId, TripId, SelectedActivityIds, totalPrice);
+
+            // 4. التوجيه المباشر للمسار الذي طلبته (Customer/Home/Cart)
+            return RedirectToAction("Cart");
+        }
+
+
+        [HttpPost]
+        public IActionResult RemoveFromCart(int cartItemId)
+        {
+            _cartRepo.RemoveCartItem(cartItemId);
+            return RedirectToAction("Cart");
+        }
+
+        [HttpPost]
+        public IActionResult Payment()
+        {
+            var userId = User.Identity?.Name ?? "guest";
+            _cartRepo.ClearCart(userId);
+            TempData["PaymentMessage"] = "تمت عملية الدفع بنجاح ✅";
+            return RedirectToAction("Cart");
         }
     }
-
-    }
+}
