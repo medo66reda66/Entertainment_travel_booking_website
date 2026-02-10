@@ -1,12 +1,15 @@
-﻿using Entertainment_travel_booking_website.Models;
+﻿using Ecommerce.Utilities;
+using Entertainment_travel_booking_website.Models;
 using Entertainment_travel_booking_website.modelVM;
 using Entertainment_travel_booking_website.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq.Expressions;
 
 namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
     public class TripController : Controller
     {
         private readonly IRepository<Trip> _tripRepository;
@@ -59,6 +62,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
 
         // ----- Create -----
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
         public async Task<IActionResult> Create()
         {
             ViewBag.Hotels = await _hotelRepository.GetAsync() ?? new List<Hotel>();
@@ -68,7 +73,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-     
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
         public async Task<IActionResult> Create(TripCreateVM tripcreateVM, CancellationToken cancellationtoken)
         {
             if (!ModelState.IsValid)
@@ -161,6 +166,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         }
 
         // ----- Edit -----
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
             var trip = await _tripRepository.GetOneAsync(
@@ -197,6 +204,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Edit(TripEditVM tripeEditVM, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid) return View(tripeEditVM);
@@ -287,6 +295,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
 
         // ----------------- Delete Trip -----------------
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             // جلب الرحلة مع الصور الفرعية

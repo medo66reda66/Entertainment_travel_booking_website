@@ -1,7 +1,9 @@
-﻿using Entertainment_travel_booking_website.Models;
+﻿using Ecommerce.Utilities;
+using Entertainment_travel_booking_website.Models;
 using Entertainment_travel_booking_website.modelVM;
 using Entertainment_travel_booking_website.Repository;
 using Entertainment_travel_booking_website.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
@@ -9,6 +11,7 @@ using System.Linq.Expressions;
 namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles =$"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
     public class AdditionalActivitiesController : Controller
     {
         private readonly IAdditianActivitiesRepository _activitiesRepo;
@@ -39,6 +42,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         }
 
         // ----------------- Create -----------------
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
         public IActionResult Create()
         {
             return View();
@@ -46,6 +51,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
         public async Task<IActionResult> Create(AdditionalActivityVM vm)
         {
             if (!ModelState.IsValid) return View(vm);
@@ -88,6 +94,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         }
 
         // ----------------- Edit -----------------
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Edit(int id)
         {
             var activity = await _activitiesRepo.GetOneAsync(
@@ -111,6 +119,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Edit(AdditionalActivityVM vm)
         {
             if (!ModelState.IsValid) return View(vm);
@@ -161,6 +170,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         }
 
         // ----------------- Delete -----------------
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Delete(int id)
         {
             var activity = await _activitiesRepo.GetOneAsync(

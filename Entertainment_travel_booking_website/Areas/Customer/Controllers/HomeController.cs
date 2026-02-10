@@ -4,12 +4,15 @@ using Entertainment_travel_booking_website.Models.ViewModels;
 using Entertainment_travel_booking_website.modelVM;
 using Entertainment_travel_booking_website.Repository;
 using Entertainment_travel_booking_website.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
 {
     [Area("Customer")]
+    [Authorize]
+
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _Context;
