@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Entertainment_travel_booking_website.Models.Room>
+﻿@using Ecommerce.Utilities
+@model IEnumerable<Entertainment_travel_booking_website.Models.Room>
 
 @{
     Layout = "_AdminLayout";
@@ -85,20 +86,27 @@
                                 <button class="btn btn-light btn-sm btn-icon shadow-none" data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots-vertical"></i>
                                 </button>
-                                <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm p-2">
-                                    <li>
-                                        <a class="dropdown-item rounded" asp-action="Edit" asp-route-id="@room.ID">
-                                            <i class="bi bi-pencil-square me-2 text-primary"></i> Edit Room
-                                        </a>
-                                    </li>
-                                    <li><hr class="dropdown-divider text-light"></li>
-                                    <li>
-                                        <a class="dropdown-item rounded text-danger" asp-action="Delete" asp-route-id="@room.ID"
-                                           onclick="return confirm('Are you sure you want to delete this room?');">
-                                            <i class="bi bi-trash3 me-2"></i> Delete
-                                        </a>
-                                    </li>
-                                </ul>
+                                @if (User.IsInRole(DS.SUPER_ADMIN_ROLE) || User.IsInRole(DS.ADMIN_ROLE))
+                                {
+                                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow-sm p-2">
+                                        <li>
+                                            <a class="dropdown-item rounded" asp-action="Edit" asp-route-id="@room.ID">
+                                                <i class="bi bi-pencil-square me-2 text-primary"></i> Edit Room
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider text-light"></li>
+                                        <li>
+                                            <a class="dropdown-item rounded text-danger" asp-action="Delete" asp-route-id="@room.ID"
+                                            onclick="return confirm('Are you sure you want to delete this room?');">
+                                                <i class="bi bi-trash3 me-2"></i> Delete
+                                            </a>
+                                        </li>
+                                    </ul>
+                                }
+                                else
+                                {
+                                     <td>NO Action!</td>
+                                }
                             </div>
                         </td>
                     </tr>

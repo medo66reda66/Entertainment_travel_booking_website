@@ -1,6 +1,8 @@
-﻿using Entertainment_travel_booking_website.Models;
+﻿using Ecommerce.Utilities;
+using Entertainment_travel_booking_website.Models;
 using Entertainment_travel_booking_website.modelVM;
 using Entertainment_travel_booking_website.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Linq.Expressions;
@@ -8,6 +10,7 @@ using System.Linq.Expressions;
 namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
     public class RoomController : Controller
     {
         private readonly IRepository<Room> _roomRepo;
@@ -27,6 +30,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         }
 
         // ----------------- Create -----------------
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
         public async Task<IActionResult> Create(CancellationToken cancellationToken)
         {
             var hotels = await _hotelRepo.GetAsync(cancellationToken: cancellationToken);
@@ -43,6 +48,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
         public async Task<IActionResult> Create(RoomVM vm, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
@@ -69,6 +75,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         }
 
         // ----------------- Edit -----------------
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
             var room = await _roomRepo.GetOneAsync(r => r.ID == id, cancellationToken: cancellationToken);
@@ -88,6 +96,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Edit(RoomVM vm, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid) return View(vm);
@@ -108,6 +117,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         }
 
         // ----------------- Delete -----------------
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             var room = await _roomRepo.GetOneAsync(r => r.ID == id, cancellationToken: cancellationToken);

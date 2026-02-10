@@ -3,6 +3,8 @@ using Entertainment_travel_booking_website.DataBase;
 using Entertainment_travel_booking_website.Models;
 using Entertainment_travel_booking_website.Repository;
 using Entertainment_travel_booking_website.Repository.IRepository;
+using Entertainment_travel_booking_website.Utilities;
+using Entertainment_travel_booking_website.Utilities.IDbInitial;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -80,8 +82,14 @@ namespace Entertainment_travel_booking_website
                 opt.SignInScheme = IdentityConstants.ExternalScheme;
             });
 
-            var app = builder.Build();
+            builder.Services.AddScoped<IDbIntializer,DbInitializer>();
 
+
+            var app = builder.Build();
+            var scope = app.Services.CreateScope();
+            var serviceProvider = scope.ServiceProvider.GetService<IDbIntializer>();
+            serviceProvider?.Initializ();
+             
             // Configure the HTTP request pipeline
             if (!app.Environment.IsDevelopment())
             {

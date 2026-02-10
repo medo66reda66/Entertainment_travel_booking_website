@@ -1,7 +1,9 @@
-﻿using Entertainment_travel_booking_website.Models;
+﻿using Ecommerce.Utilities;
+using Entertainment_travel_booking_website.Models;
 using Entertainment_travel_booking_website.modelVM;
 using Entertainment_travel_booking_website.Repository;
 using Entertainment_travel_booking_website.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -9,6 +11,7 @@ using System.Threading.Tasks;
 namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
     public class HotelController : Controller
     {
         private readonly IRepository<Hotel> _hotelRepository;
@@ -42,10 +45,13 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         }
 
         //----------------- Create -----------------
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
         public IActionResult Create() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
         public async Task<IActionResult> Create(HotelCreateVM hotelCreateVM, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid) return View(hotelCreateVM);
@@ -116,6 +122,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         }
 
         // GET: Edit Hotel
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
             var hotel = await _hotelRepository.GetOneAsync(
@@ -143,6 +151,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         // POST: Edit Hotel
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Edit(HotelEditVM hotelEditVM, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid) return View(hotelEditVM);
@@ -230,6 +239,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             return RedirectToAction("Index");
         }
         //----------------- Delete -----------------
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             // جلب الفندق مع الصور الفرعية

@@ -28,9 +28,16 @@
                 </ul>
             </div>
             <div class="flex gap-4">
-                <a href="Identity/Account/Register" class="hidden md:block text-gray-500 font-bold px-4">انشاء حساب</a>
-                <a href="Identity/Account/Login" class="bg-blue-600 text-white px-7 py-2.5 rounded-2xl font-bold hover:shadow-lg transition-all active:scale-95">LOgin</a>
-                <a href="Identity/Account/Logout" class="bg-blue-600 text-white px-7 py-2.5 rounded-2xl font-bold hover:shadow-lg transition-all active:scale-95">LOgout</a>
+   
+                @if(User.Identity.IsAuthenticated)
+                {
+                    <span class="text-gray-700 font-bold px-4">مرحبا،(@User.Identity.Name)</span>
+                    <a href="Identity/Account/Logout" class="bg-blue-600 text-white px-7 py-2.5 rounded-2xl font-bold hover:shadow-lg transition-all active:scale-95">LOgout</a>
+                }else
+                {
+                    <a href="Identity/Account/Login" class="bg-blue-600 text-white px-7 py-2.5 rounded-2xl font-bold hover:shadow-lg transition-all active:scale-95">LOgin</a>
+                    <a href="Identity/Account/Register" class="hidden md:block text-gray-500 font-bold px-4">انشاء حساب</a>
+                }
             </div>
         </div>
     </nav>
