@@ -52,4 +52,9 @@ public class CartRepository : ICartRepository
         _context.cartItems.RemoveRange(items);
         _context.SaveChanges();
     }
+
+    public void AddToCart(string userId, int tripId, List<int> activityIds, decimal totalPrice, int quantity)
+    {
+        throw new NotImplementedException();
+    }
 }

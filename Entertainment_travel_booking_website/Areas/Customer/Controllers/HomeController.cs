@@ -1,6 +1,8 @@
 ﻿using Entertainment_travel_booking_website.DataBase;
 using Entertainment_travel_booking_website.Models;
 using Entertainment_travel_booking_website.Models.ViewModels;
+using Entertainment_travel_booking_website.modelVM;
+using Entertainment_travel_booking_website.Repository;
 using Entertainment_travel_booking_website.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -109,41 +111,63 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
 
             return View(activity);
         }
+        public IActionResult HotelDetail(int id)
+        {
+            var hotel = _Context.hotels
+                .Include(h => h.HotelSupImgs)  
+                .Include(h => h.Rooms)         
+                .FirstOrDefault(h => h.Id == id);
+
+            if (hotel == null) return NotFound();
+
+        
+            var vm = new HotelDetailVM
+            {
+                Hotel = hotel,
+                Images = hotel.HotelSupImgs.ToList(),
+                Rooms = hotel.Rooms.ToList()
+            };
+
+            return View(vm);
+        }
+
+
 
         // ------------------- صفحة Cart -------------------
         [HttpGet]
         public IActionResult Cart()
         {
             var userId = User.Identity?.Name ?? "guest";
-            // الـ Include مهم جداً هنا عشان الداتا تظهر في الجدول
+         
             var cartItems = _cartRepo.GetCartItems(userId);
             return View(cartItems);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddToCart(int TripId, List<int> SelectedActivityIds)
+        public IActionResult cart(int TripId, List<int> SelectedActivityIds, int Quantity = 1) // <-- إضافة Quantity
         {
-            // 1. تحديد هوية المستخدم (لو مش مسجل دخول بنستخدم guest)
             var userId = User.Identity?.Name ?? "guest";
 
-            // 2. جلب بيانات الرحلة والأنشطة لحساب السعر (أو الحساب داخل الـ Repository)
+            // التأكد من وجود الرحلة
             var trip = _Context.trips.FirstOrDefault(t => t.Id == TripId);
             if (trip == null) return NotFound();
 
-            var activities = _Context.additianActivites
+          
+            SelectedActivityIds ??= new List<int>();
+  var activities = _Context.additianActivites
                 .Where(a => SelectedActivityIds.Contains(a.Id))
                 .ToList();
 
-            decimal totalPrice = trip.Price + activities.Sum(a => a.Price);
+       
+            decimal totalPrice = (trip.Price + activities.Sum(a => a.Price)) * Quantity;
 
-            // 3. الحفظ في قاعدة البيانات عن طريق الـ Repository
-            // تأكد أن ميثود AddToCart داخل الـ Repository تحتوي على _context.SaveChanges()
-            _cartRepo.AddToCart(userId, TripId, SelectedActivityIds, totalPrice);
+           
+            _cartRepo.AddToCart(userId, TripId, SelectedActivityIds, totalPrice, Quantity);
 
-            // 4. التوجيه المباشر للمسار الذي طلبته (Customer/Home/Cart)
+   
             return RedirectToAction("Cart");
         }
-
 
         [HttpPost]
         public IActionResult RemoveFromCart(int cartItemId)
