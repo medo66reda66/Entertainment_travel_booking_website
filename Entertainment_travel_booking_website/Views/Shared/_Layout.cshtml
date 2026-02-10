@@ -17,20 +17,47 @@
 </head>
 <body>
 
-    <nav class="bg-white/80 backdrop-blur-md shadow-sm p-4 sticky top-0 z-[100]">
+    <nav class="bg-white/80 backdrop-blur-md shadow-sm p-4 sticky top-0 z-[100] border-b border-gray-100">
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center gap-10">
                 <div class="text-3xl font-black text-blue-600 tracking-tighter italic">TravelGo</div>
                 <ul class="hidden md:flex gap-8 text-sm font-bold text-gray-600">
-                    <li><a href="#popular" class="hover:text-blue-600 transition">وجهات شائعة</a></li>
-                    <li><a href="#trips" class="hover:text-blue-600 transition">الرحلات</a></li>
-                    <li><a href="#why-us" class="hover:text-blue-600 transition">لماذا نحن؟</a></li>
+                    <li><a href="#popular" class="hover:text-blue-600 transition relative after:content-[''] after:absolute after:bottom-[-4px] after:right-0 after:w-0 after:h-[2px] after:bg-blue-600 hover:after:w-full after:transition-all">وجهات شائعة</a></li>
+                    <li><a href="#trips" class="hover:text-blue-600 transition relative after:content-[''] after:absolute after:bottom-[-4px] after:right-0 after:w-0 after:h-[2px] after:bg-blue-600 hover:after:w-full after:transition-all">الرحلات</a></li>
+                    <li><a href="#why-us" class="hover:text-blue-600 transition relative after:content-[''] after:absolute after:bottom-[-4px] after:right-0 after:w-0 after:h-[2px] after:bg-blue-600 hover:after:w-full after:transition-all">لماذا نحن؟</a></li>
                 </ul>
             </div>
-            <div class="flex gap-4">
-                <a href="Identity/Account/Register" class="hidden md:block text-gray-500 font-bold px-4">انشاء حساب</a>
-                <a href="Identity/Account/Login" class="bg-blue-600 text-white px-7 py-2.5 rounded-2xl font-bold hover:shadow-lg transition-all active:scale-95">LOgin</a>
-                <a href="Identity/Account/Logout" class="bg-blue-600 text-white px-7 py-2.5 rounded-2xl font-bold hover:shadow-lg transition-all active:scale-95">LOgout</a>
+
+            <div class="flex items-center gap-3">
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <a href="Identity/Account/Register" class="hidden md:block text-gray-600 font-bold text-sm px-4 hover:text-blue-600 transition">إنشاء حساب</a>
+                    <a href="Identity/Account/Login" class="bg-blue-600 text-white px-8 py-2.5 rounded-xl font-bold hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-200 transition-all active:scale-95 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" /></svg>
+                       تسجيل دخول
+                    </a>
+                }
+                else
+                {
+                <div class="flex items-center gap-4">
+                    <div class="hidden lg:flex flex-col items-end leading-tight">
+                        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">مرحباً بك</span>
+                        <span class="text-sm font-black text-gray-800">@User.Identity.Name</span>
+                    </div>
+
+                    <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center font-black border border-blue-100 shadow-sm">
+                        @User.Identity.Name.Substring(0, 1).ToUpper()
+                    </div>
+
+                    <a href="Identity/Account/Logout"
+                       class="group bg-red-50 text-red-500 px-5 py-2.5 rounded-xl font-black text-sm hover:bg-red-500 hover:text-white transition-all duration-300 active:scale-95 flex items-center gap-2 border border-red-100 shadow-sm shadow-red-50">
+                        <svg class="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                        </svg>
+                        <span>خروج</span>
+                    </a>
+                </div>
+                }
             </div>
         </div>
     </nav>
