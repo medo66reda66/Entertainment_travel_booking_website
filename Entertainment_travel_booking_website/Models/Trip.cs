@@ -14,13 +14,15 @@
         public decimal? Rate { get; set; }
         public int MaxPeople { get; set; }
         public bool Status { get; set; }
+
         public List<TripSupimage>? TripSupimages { get; set; }
+
+        // ===== Hotel (واحد) =====
         public int? HotelId { get; set; }
         public Hotel? Hotel { get; set; }
 
-        public int? AdditionalActivityId { get; set; }
-        public AdditianActivities? AdditionalActivity { get; set; }
-
-
+        // ===== Additional Activities (كتير) =====
+        public ICollection<TripAdditianActivities> TripAdditianActivities { get; set; }
+            = new List<TripAdditianActivities>();
     }
 }

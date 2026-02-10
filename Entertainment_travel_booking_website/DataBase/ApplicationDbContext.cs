@@ -19,18 +19,28 @@ namespace Entertainment_travel_booking_website.DataBase
         public DbSet<TripSupimage> tripSupimages { get; set; }
         public DbSet<ApplicationUserOtp> ApplicationUserOtps { get; set; }
         public DbSet<Room> rooms { get; set; }
-        
+        public DbSet<CartItem> cartItems { get; set; }
+
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{
         //    base.OnConfiguring(optionsBuilder);
         //    optionsBuilder.UseSqlServer("Data Source=.;Initial catalog =Trips; Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");  base.OnConfiguring(optionsBuilder);
-            //optionsBuilder.UseSqlServer("Data Source=(localdb)\\ProjectModels;Initial Catalog=Trips;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+        //optionsBuilder.UseSqlServer("Data Source=(localdb)\\ProjectModels;Initial Catalog=Trips;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
         //}
-
-        override protected void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            // تكوين علاقات CartItem
+            modelBuilder.Entity<CartItem>()
+                .HasOne(ci => ci.Trip)
+                .WithMany()
+                .HasForeignKey(ci => ci.TripId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // تطبيق Configurations لكل الـ Entities
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(HotelSupImgEntitytypeconficration).Assembly);
         }
+
     }
 }

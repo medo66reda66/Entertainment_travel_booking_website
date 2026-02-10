@@ -64,13 +64,21 @@
                                 <option value="">-- No Hotel --</option>
                             </select>
                         </div>
-                        <div class="col-md-6">
-                            <label asp-for="AdditionalActivityId" class="form-label fw-bold">Activity</label>
-                            <select asp-for="AdditionalActivityId" class="form-select" asp-items="@(new SelectList(ViewBag.Activities, "Id", "Place"))">
-                                <option value="">-- No Activity --</option>
-                            </select>
+                        <div class="col-md-12">
+                            <label class="form-label fw-bold">Additional Activities</label>
+                            <div class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                                @foreach (var activity in ViewBag.Activities)
+                                {
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox"
+                                               name="SelectedActivityIds" value="@activity.Id"
+                                               @(Model.SelectedActivityIds?.Contains(activity.Id) == true ? "checked" : "") />
+                                        <label class="form-check-label">@activity.Place</label>
+                                    </div>
+                                }
+                            </div>
                         </div>
-                    </div>
+
                 </div>
             </div>
 

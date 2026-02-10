@@ -114,8 +114,26 @@
 
                         <td>
                             <div class="d-flex flex-column">
-                                <span class="small text-dark fw-medium"><i class="bi bi-building me-1"></i> @(trip.Hotel?.Name ?? "No Hotel")</span>
-                                <span class="small text-muted" style="font-size: 11px;"><i class="bi bi-geo me-1"></i> @(trip.AdditionalActivity?.Place ?? "None")</span>
+                                <!-- Hotel Name -->
+                                <span class="small text-dark fw-medium">
+                                    <i class="bi bi-building me-1"></i> @(trip.Hotel?.Name ?? "No Hotel")
+                                </span>
+                                <!-- Additional Activities -->
+                                <span class="small text-muted" style="font-size: 11px;">
+                                    <i class="bi bi-geo me-1"></i>
+                                    @if (trip.TripAdditianActivities != null && trip.TripAdditianActivities.Any())
+                                    {
+                                        @string.Join(", ", trip.TripAdditianActivities.Select(a => a.additianActivitiesId))
+                                        <!-- هنا ممكن تعرض أي خاصية موجودة في TripAdditianActivities نفسها، مثلاً Id أو أي حقل -->
+                                    }
+                                    else
+                                    {
+                                        <text>None</text>
+                                    }
+                                </span>
+
+
+
                             </div>
                         </td>
 
@@ -148,30 +166,30 @@
     </table>
 </div>
 
-    <style>
-        .bg-light-success {
-            background-color: #e8fff3 !important;
+<style>
+    .bg-light-success {
+        background-color: #e8fff3 !important;
+    }
+
+    .bg-light-danger {
+        background-color: #fff5f8 !important;
+    }
+
+    .table tbody tr {
+        transition: all 0.2s;
+    }
+
+        .table tbody tr:hover {
+            background-color: #fcfcfc !important;
+            transform: translateY(-1px);
         }
 
-        .bg-light-danger {
-            background-color: #fff5f8 !important;
-        }
+    .dropdown-item {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
 
-        .table tbody tr {
-            transition: all 0.2s;
-        }
-
-            .table tbody tr:hover {
-                background-color: #fcfcfc !important;
-                transform: translateY(-1px);
-            }
-
-        .dropdown-item {
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-
-        .w-50px {
-            width: 50px;
-        }
-    </style>
+    .w-50px {
+        width: 50px;
+    }
+</style>

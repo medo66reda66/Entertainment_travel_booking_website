@@ -4,6 +4,7 @@ using Entertainment_travel_booking_website.DataBase;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Entertainment_travel_booking_website.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260209154018_mainImgAct")]
+    partial class mainImgAct
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,31 +24,6 @@ namespace Entertainment_travel_booking_website.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("CartItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("TripId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TripId");
-
-                    b.ToTable("cartItems");
-                });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.ActivitiesSupImg", b =>
                 {
@@ -76,9 +54,6 @@ namespace Entertainment_travel_booking_website.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CartItemId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
@@ -96,8 +71,6 @@ namespace Entertainment_travel_booking_website.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CartItemId");
 
                     b.ToTable("additianActivites");
                 });
@@ -510,17 +483,6 @@ namespace Entertainment_travel_booking_website.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("CartItem", b =>
-                {
-                    b.HasOne("Entertainment_travel_booking_website.Models.Trip", "Trip")
-                        .WithMany()
-                        .HasForeignKey("TripId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Trip");
-                });
-
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.ActivitiesSupImg", b =>
                 {
                     b.HasOne("Entertainment_travel_booking_website.Models.AdditianActivities", "AdditianActivities")
@@ -530,13 +492,6 @@ namespace Entertainment_travel_booking_website.Migrations
                         .IsRequired();
 
                     b.Navigation("AdditianActivities");
-                });
-
-            modelBuilder.Entity("Entertainment_travel_booking_website.Models.AdditianActivities", b =>
-                {
-                    b.HasOne("CartItem", null)
-                        .WithMany("SelectedActivities")
-                        .HasForeignKey("CartItemId");
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.ApplicationUserOtp", b =>
@@ -660,11 +615,6 @@ namespace Entertainment_travel_booking_website.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("CartItem", b =>
-                {
-                    b.Navigation("SelectedActivities");
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.AdditianActivities", b =>

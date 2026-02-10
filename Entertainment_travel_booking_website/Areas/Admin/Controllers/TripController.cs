@@ -43,7 +43,12 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         public async Task<IActionResult> Index(CancellationToken cancellationToken)
         {
             var trips = await _tripRepository.GetAsync(
-                includes: new Expression<Func<Trip, object>>[] { t => t.TripSupimages },
+                includes: new Expression<Func<Trip, object>>[]
+                {
+            t => t.TripSupimages,
+            t => t.Hotel,
+            t => t.TripAdditianActivities  // فقط الـ Collection بدون Select
+                },
                 tracked: false,
                 cancellationToken: cancellationToken
             );
@@ -51,23 +56,27 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             return View(trips);
         }
 
-        // ----- Create -----
-        public async Task<IActionResult> Create()  // جعلها async لتجنب مشاكل .Result
-        {
-            // ====== ADD ONLY ======
-            ViewBag.Hotels = await _hotelRepository.GetAsync() ?? new List<Hotel>();  // null check
-            ViewBag.Activities = await _activitiesRepository.GetAsync() ?? new List<AdditianActivities>();  // null check
-            // ======================
 
+
+        // ----- Create -----
+        public async Task<IActionResult> Create()
+        {
+            ViewBag.Hotels = await _hotelRepository.GetAsync() ?? new List<Hotel>();
+            ViewBag.Activities = await _activitiesRepository.GetAsync() ?? new List<AdditianActivities>();
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+     
         public async Task<IActionResult> Create(TripCreateVM tripcreateVM, CancellationToken cancellationtoken)
         {
             if (!ModelState.IsValid)
+            {
+                ViewBag.Hotels = await _hotelRepository.GetAsync() ?? new List<Hotel>();
+                ViewBag.Activities = await _activitiesRepository.GetAsync() ?? new List<AdditianActivities>();
                 return View(tripcreateVM);
+            }
 
             try
             {
@@ -82,14 +91,23 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
                     AvailableSeats = tripcreateVM.AvailableSeats,
                     MaxPeople = tripcreateVM.MaxPeople,
                     Status = tripcreateVM.Status,
-
-                    // ====== ADD ONLY ======
-                    HotelId = tripcreateVM.HotelId,
-                    AdditionalActivityId = tripcreateVM.AdditionalActivityId
-                    // ======================
+                    HotelId = tripcreateVM.HotelId
                 };
 
-                if (tripcreateVM.MainImage is not null && tripcreateVM.MainImage.Length > 0)
+                // Multiple Activities
+                if (tripcreateVM.SelectedActivityIds != null && tripcreateVM.SelectedActivityIds.Count > 0)
+                {
+                    foreach (var activityId in tripcreateVM.SelectedActivityIds)
+                    {
+                        trip.TripAdditianActivities.Add(new TripAdditianActivities
+                        {
+                            additianActivitiesId = activityId
+                        });
+                    }
+                }
+
+                // Main Image
+                if (tripcreateVM.MainImage != null && tripcreateVM.MainImage.Length > 0)
                 {
                     var tripsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trips");
                     if (!Directory.Exists(tripsFolder)) Directory.CreateDirectory(tripsFolder);
@@ -106,6 +124,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
                 await _tripRepository.AddAsync(trip, cancellationtoken);
                 await _tripRepository.CommitAsync(cancellationtoken);
 
+                // Sub Images
                 if (tripcreateVM.SupImages != null)
                 {
                     var supImagesFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trip-sup");
@@ -128,15 +147,17 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
                     await _tripSupimageRepository.CommitAsync(cancellationtoken);
                 }
-                TempData["sucess-Notification"] = "Trip Create Successfully";
+
+                TempData["sucess-Notification"] = "Trip Created Successfully";
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, "An error occurred while uploading images: " + ex.Message);
+                ModelState.AddModelError(string.Empty, "Error: " + ex.Message);
+                ViewBag.Hotels = await _hotelRepository.GetAsync() ?? new List<Hotel>();
+                ViewBag.Activities = await _activitiesRepository.GetAsync() ?? new List<AdditianActivities>();
                 return View(tripcreateVM);
             }
-
-            return RedirectToAction("Index");
         }
 
         // ----- Edit -----
@@ -144,7 +165,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         {
             var trip = await _tripRepository.GetOneAsync(
                 e => e.Id == id,
-                includes: [e => e.TripSupimages],
+                includes: new Expression<Func<Trip, object>>[] { e => e.TripSupimages, e => e.TripAdditianActivities },
                 cancellationToken: cancellationToken
             );
 
@@ -164,17 +185,12 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
                 Status = trip.Status,
                 ExistingMainImage = trip.Image,
                 ExistingSupImages = trip.TripSupimages,
-
-                // ====== ADD ONLY ======
                 HotelId = trip.HotelId,
-                AdditionalActivityId = trip.AdditionalActivityId
-                // ======================
+                SelectedActivityIds = trip.TripAdditianActivities.Select(a => a.additianActivitiesId).ToList()
             };
 
-            // ====== ADD ONLY ======
-            ViewBag.Hotels = await _hotelRepository.GetAsync() ?? new List<Hotel>();  // null check
-            ViewBag.Activities = await _activitiesRepository.GetAsync() ?? new List<AdditianActivities>();  // null check
-            // ======================
+            ViewBag.Hotels = await _hotelRepository.GetAsync() ?? new List<Hotel>();
+            ViewBag.Activities = await _activitiesRepository.GetAsync() ?? new List<AdditianActivities>();
 
             return View(tripVM);
         }
@@ -187,7 +203,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
             var trip = await _tripRepository.GetOneAsync(
                 e => e.Id == tripeEditVM.Id,
-                includes: [e => e.TripSupimages],
+                includes: new Expression<Func<Trip, object>>[] { e => e.TripSupimages, e => e.TripAdditianActivities },
                 cancellationToken: cancellationToken
             );
 
@@ -202,17 +218,23 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             trip.AvailableSeats = tripeEditVM.AvailableSeats;
             trip.MaxPeople = tripeEditVM.MaxPeople;
             trip.Status = tripeEditVM.Status;
-
-            // ====== ADD ONLY ======
             trip.HotelId = tripeEditVM.HotelId;
-            trip.AdditionalActivityId = tripeEditVM.AdditionalActivityId;
-            // ======================
 
+            // Update Activities
+            trip.TripAdditianActivities.Clear();
+            if (tripeEditVM.SelectedActivityIds != null && tripeEditVM.SelectedActivityIds.Count > 0)
+            {
+                foreach (var activityId in tripeEditVM.SelectedActivityIds)
+                {
+                    trip.TripAdditianActivities.Add(new TripAdditianActivities
+                    {
+                        additianActivitiesId = activityId
+                    });
+                }
+            }
+
+            // Main Image
             var tripsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trips");
-            var supImagesFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trip-sup");
-            if (!Directory.Exists(tripsFolder)) Directory.CreateDirectory(tripsFolder);
-            if (!Directory.Exists(supImagesFolder)) Directory.CreateDirectory(supImagesFolder);
-
             if (tripeEditVM.MainImage != null)
             {
                 var existingMainImagePath = Path.Combine(tripsFolder, trip.Image);
@@ -227,6 +249,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
                 trip.Image = mainImageName;
             }
 
+            // Sub Images
+            var supImagesFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/trip-sup");
             if (tripeEditVM.SupImages != null)
             {
                 foreach (var existingSupImage in trip.TripSupimages)
@@ -240,7 +264,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
                 foreach (var image in tripeEditVM.SupImages)
                 {
-                    var imageName = Guid.NewGuid() + Path.GetExtension(image.FileName);
+                    var imageName = Guid.NewGuid().ToString() + Path.GetExtension(image.FileName);
                     var imagePath = Path.Combine(supImagesFolder, imageName);
 
                     using (var stream = new FileStream(imagePath, FileMode.Create))
@@ -256,10 +280,12 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
             _tripRepository.Update(trip);
             await _tripRepository.CommitAsync(cancellationToken);
-            TempData["sucess-Notification"] = "Trip Edit Successfully";
+            TempData["sucess-Notification"] = "Trip Edited Successfully";
 
             return RedirectToAction("Index");
         }
+
+
         // ----------------- Delete Trip -----------------
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {

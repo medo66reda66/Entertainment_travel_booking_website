@@ -1,0 +1,235 @@
+﻿@model Entertainment_travel_booking_website.Models.ViewModels.TripDetailVM
+@{
+    ViewData["Title"] = Model.Trip.Place;
+    Layout = "_Layout";
+}
+
+<main class="w-[85%] max-w-7xl mx-auto px-4 py-12 lg:py-20 space-y-12">
+
+    <!-- عنوان الرحلة -->
+    <section class="text-center space-y-4">
+        <h1 class="text-4xl md:text-5xl font-black text-gray-900">@Model.Trip.Place</h1>
+        <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+            اكتشف تجربة لا تُنسى في @Model.Trip.Place
+        </p>
+    </section>
+
+    <!-- الصورة الرئيسية + الصور الفرعية -->
+    <section class="space-y-6">
+        <div class="flex flex-col items-center">
+            <img id="mainTripImage"
+                 src="@Url.Content(Model.Trip.Image != null ? "~/images/trips/" + Model.Trip.Image : "~/images/placeholder/trip-placeholder.jpg")"
+                 alt="@Model.Trip.Place"
+                 class="w-full max-w-4xl h-80 md:h-[500px] object-cover rounded-2xl shadow-2xl mb-6" />
+
+            @if (Model.Trip.TripSupimages != null && Model.Trip.TripSupimages.Any())
+            {
+                <div class="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 px-2">
+                    @foreach (var subImg in Model.Trip.TripSupimages)
+                    {
+                        <img src="@Url.Content("~/images/trip-sup/" + subImg.SupImg)"
+                             alt="صورة إضافية"
+                             class="w-28 h-20 md:w-36 md:h-28 object-cover rounded-lg shadow cursor-pointer hover:scale-105 transition-transform trip-thumbnail"
+                             data-full="@Url.Content("~/images/trip-sup/" + subImg.SupImg)" />
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="text-center">
+            <p class="text-3xl font-bold text-green-700">
+                السعر الأساسي: <span class="text-4xl">$@Model.Trip.Price</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- الأنشطة الإضافية + نموذج الإضافة للسلة -->
+    <section class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-10 border border-gray-100">
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 border-b border-blue-600 pb-4">
+            الأنشطة الإضافية المتاحة
+        </h2>
+
+        <form method="post"
+              asp-area="Customer"
+              asp-controller="Home"
+              asp-action="AddToCart"
+              id="addToCartForm"
+              onsubmit="return validateAndSubmit()">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" name="TripId" value="@Model.Trip.Id" />
+
+            <!-- حقل مخفي لتخزين الأنشطة المختارة -->
+            <input type="hidden" name="SelectedActivityIds" id="selectedActivitiesInput" value="" />
+
+            <div class="space-y-6">
+                @if (Model.AdditionalActivities != null && Model.AdditionalActivities.Any())
+                {
+                    @foreach (var activity in Model.AdditionalActivities)
+                    {
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between p-5 border border-gray-200 rounded-xl hover:border-blue-300 transition-all bg-gray-50 hover:bg-white">
+                            <div class="flex items-start gap-4">
+                                <input type="checkbox"
+                                       name="activityCheckbox"
+                                       value="@activity.Id"
+                                       data-price="@activity.Price"
+                                       id="act_@activity.Id"
+                                       class="activity-checkbox mt-1.5 w-5 h-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500" />
+
+                                <div>
+                                    <label for="act_@activity.Id" class="font-semibold text-lg text-gray-900 cursor-pointer">
+                                        @activity.Place
+                                    </label>
+                                    <p class="text-green-700 font-medium mt-1">
+                                        +$@activity.Price
+                                    </p>
+                                </div>
+                            </div>
+
+                            <a href="@Url.Action("ActivityDetail", "Home", new { area = "Customer", id = activity.Id })"
+                               class="mt-4 sm:mt-0 inline-block px-5 py-2 text-sm font-medium text-blue-700 border border-blue-600 rounded-lg hover:bg-blue-50 transition">
+                                عرض التفاصيل
+                            </a>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p class="text-center text-gray-500 py-8 italic">
+                        لا توجد أنشطة إضافية متاحة لهذه الرحلة حاليًا
+                    </p>
+                }
+            </div>
+
+            <!-- منطقة السعر الإجمالي + زر الإضافة -->
+            <div class="mt-10 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-100">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-6">
+                    <div>
+                        <p class="text-gray-600 font-medium">الإجمالي المتوقع:</p>
+                        <p class="text-4xl md:text-5xl font-black text-gray-900 mt-1">
+                            $<span id="totalPrice">@Model.Trip.Price</span>
+                        </p>
+                    </div>
+
+                    <button type="submit"
+                            id="addToCartBtn"
+                            class="w-full sm:w-auto px-10 py-5 bg-blue-600 text-white text-xl font-bold rounded-xl hover:bg-blue-700 active:scale-[0.98] transition-all shadow-lg shadow-blue-200/50">
+                        إضافة إلى السلة
+                    </button>
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <!-- رسائل التحميل والتنبيه -->
+    <div id="loadingMessage" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+            <p class="mt-4 text-lg font-medium">جاري الإضافة إلى السلة...</p>
+        </div>
+    </div>
+
+    <div id="successMessage" class="hidden fixed top-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded shadow-lg z-50">
+        تمت الإضافة إلى السلة بنجاح!
+    </div>
+
+</main>
+
+<!-- JavaScript لتغيير الصورة الرئيسية + حساب السعر الديناميكي + التحقق -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // تغيير الصورة الرئيسية عند النقر على thumbnail
+        const mainImg = document.getElementById('mainTripImage');
+        document.querySelectorAll('.trip-thumbnail').forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                mainImg.src = thumb.dataset.full;
+            });
+        });
+
+        // حساب السعر الديناميكي
+        const basePrice = parseFloat("@Model.Trip.Price") || 0;
+        const totalEl = document.getElementById('totalPrice');
+        const checkboxes = document.querySelectorAll('.activity-checkbox');
+
+        function updateTotal() {
+            let extra = 0;
+            checkboxes.forEach(cb => {
+                if (cb.checked) {
+                    extra += parseFloat(cb.dataset.price) || 0;
+                }
+            });
+            totalEl.textContent = (basePrice + extra).toFixed(2);
+        }
+
+        checkboxes.forEach(cb => cb.addEventListener('change', updateTotal));
+    });
+
+    // التحقق وإرسال النموذج
+    function validateAndSubmit() {
+        // جمع الأنشطة المختارة
+        const selectedActivities = [];
+        document.querySelectorAll('.activity-checkbox:checked').forEach(cb => {
+            selectedActivities.push(cb.value);
+        });
+
+        // تخزينها في الحقل المخفي
+        document.getElementById('selectedActivitiesInput').value = selectedActivities.join(',');
+
+        // التحقق من TripId
+        const tripId = document.querySelector('input[name="TripId"]').value;
+        if (!tripId) {
+            alert('خطأ: لا يوجد معرف للرحلة');
+            return false;
+        }
+
+        // إظهار رسالة التحميل
+        document.getElementById('loadingMessage').classList.remove('hidden');
+
+        // تسجيل البيانات في الكونسول للتحقق
+        console.log('بيانات الإرسال:', {
+            TripId: tripId,
+            SelectedActivityIds: selectedActivities,
+            TotalPrice: document.getElementById('totalPrice').textContent
+        });
+
+        // النموذج سيتم إرساله بشكل طبيعي بعد ذلك
+        return true;
+    }
+
+    // إظهار رسالة النجاح إذا كانت موجودة في TempData
+    @if (TempData["Success"] != null)
+    {
+            <text>
+            document.addEventListener('DOMContentLoaded', () => {
+                const successMessage = document.getElementById('successMessage');
+                successMessage.classList.remove('hidden');
+
+                // إخفاء الرسالة بعد 3 ثواني
+                setTimeout(() => {
+                    successMessage.classList.add('hidden');
+                }, 3000);
+            });
+            </text>
+    }
+</script>
+
+<style>
+    .scrollbar-thin::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background-color: #9ca3af;
+        border-radius: 4px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-track {
+        background: #f3f4f6;
+    }
+
+    /* أنيميشن لزر الإضافة */
+    #addToCartBtn:active {
+        transform: scale(0.98);
+    }
+</style>

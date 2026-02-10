@@ -23,7 +23,12 @@ namespace Entertainment_travel_booking_website.modelVM
         public List<IFormFile> SupImages { get; set; }
 
         // Optional selections
-        public int? HotelId { get; set; }                    // 🆕
-        public int? AdditionalActivityId { get; set; }       // 🆕
+        public int? HotelId { get; set; }   // ✔ فندق واحد
+
+        // ❌ شيل دي
+        // public int? AdditionalActivityId { get; set; }
+
+        // ✅ اختيارات متعددة
+        public List<int> SelectedActivityIds { get; set; } = new();
     }
 }
