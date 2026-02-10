@@ -21,7 +21,7 @@ namespace Entertainment_travel_booking_website
             // DbContext
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection")
+                    builder.Configuration.GetConnectionString("default")
                 )
             );
 
