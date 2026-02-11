@@ -27,7 +27,7 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
         // ------------------- الصفحة الرئيسية + Pagination -------------------
         public IActionResult Index(int page = 1, string? destination = null, decimal? minPrice = null, decimal? maxPrice = null, int? hotelId = null, bool? available = null)
         {
-            int pageSize = 8;
+            int pageSize = 4;
             var query = _Context.trips.Include(t => t.Hotel).AsQueryable();
 
             // ======== فلترة الوجهة ========
@@ -69,6 +69,12 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
 
             // ======== قائمة الفنادق للفلتر ========
             ViewBag.Hotels = _Context.hotels.ToList();
+            // تشيك لو الطلب AJAX
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                // رجع Partial View فيه كروت الرحلات بس (بدون Layout)
+                return PartialView("_TripsListPartial", trips);
+            }
 
             return View(trips);
         }

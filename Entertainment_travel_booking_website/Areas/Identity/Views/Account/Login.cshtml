@@ -2,50 +2,50 @@
 @model LoginVM
 
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = "تسجيل الدخول";
 }
 
-<div class="container">
-    <h1>Login</h1>
+<div class="bg-white/90 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-white/50">
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-black text-gray-900 mb-3">مرحباً بعودتك!</h1>
+        <p class="text-gray-500 font-bold text-sm">سجل دخولك لاستكمال رحلة استكشاف العالم</p>
+    </div>
 
-    <h4>LoginVM</h4>
-    <hr />
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="Login">
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="Email" class="control-label"></label>
-                    <input asp-for="Email" class="form-control" />
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <label asp-for="Password" class="control-label"></label>
-                    <input asp-for="Password" class="form-control" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-                <div class="form-group form-check">
-                    <label class="form-check-label">
-                        <input class="form-check-input" asp-for="RememberMe" /> @Html.DisplayNameFor(model => model.RememberMe)
-                    </label>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
-                </div>
-            </form>
-            <partial name="_ExternalAuthenticationPartial" />
+    <form asp-action="Login" class="space-y-6 text-right">
+        <div asp-validation-summary="ModelOnly" class="text-danger text-xs font-bold mb-4"></div>
+
+        <div>
+            <label asp-for="Email" class="block text-xs font-black text-blue-600 uppercase mb-2 mr-2">البريد الإلكتروني</label>
+            <input asp-for="Email" class="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-gray-700" placeholder="example@mail.com" />
+            <span asp-validation-for="Email" class="text-red-500 text-[10px] font-bold mt-1 block mr-2"></span>
         </div>
-    </div>
-    
-    <div>
-        <a asp-action="Register">Register</a>
-    </div>
-    
-    <div>
-        <a asp-action="ResendEmailConfirm">Resend Email Confirm</a>
-    </div>
-    <div>
-        <a asp-action="ForgotPassword">Forget Passwoed</a>
+
+        <div>
+            <label asp-for="Password" class="block text-xs font-black text-blue-600 uppercase mb-2 mr-2">كلمة المرور</label>
+            <input asp-for="Password" type="password" class="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-gray-700" placeholder="••••••••" />
+            <span asp-validation-for="Password" class="text-red-500 text-[10px] font-bold mt-1 block mr-2"></span>
+        </div>
+
+        <div class="flex flex-row-reverse justify-between items-center px-2">
+            <div class="flex items-center gap-2">
+                <input asp-for="RememberMe" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" />
+                <label asp-for="RememberMe" class="text-xs font-bold text-gray-600 cursor-pointer">تذكرني</label>
+            </div>
+            <a asp-action="ForgotPassword" class="text-xs font-black text-blue-600 hover:text-orange-500 transition">نسيت كلمة المرور؟</a>
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 text-white py-5 rounded-[1.8rem] font-black text-lg shadow-xl shadow-blue-100 hover:bg-gray-900 transition-all active:scale-95 flex items-center justify-center gap-2">
+            <span>تسجيل الدخول</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M11 16l-4-4m0 0l4-4m-4 4h14" /></svg>
+        </button>
+    </form>
+
+    <div class="mt-10 pt-8 border-t border-gray-100 text-center space-y-4">
+        <p class="text-gray-500 text-sm font-bold">
+            ليس لديك حساب؟
+            <a asp-action="Register" class="text-orange-500 font-black hover:underline">أنشئ حسابك الآن</a>
+        </p>
+        <a asp-action="ResendEmailConfirm" class="block text-[10px] font-bold text-gray-400 hover:text-blue-600 transition">لم يصلك رابط التفعيل؟ إعادة الإرسال</a>
     </div>
 </div>
 
