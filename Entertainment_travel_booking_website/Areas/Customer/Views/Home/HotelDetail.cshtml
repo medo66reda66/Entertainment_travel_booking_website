@@ -81,7 +81,9 @@
     }
 
 </main>
+<script>
 
+</script>
 <style>
     .section-title {
         font-size: 1.75rem;
@@ -138,3 +140,23 @@
         border: none;
     }
 </style>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+        const hotelThumbs = document.querySelectorAll('.hotel-thumb');
+        const mainHotelImage = document.querySelector('section.relative img'); // الصورة الكبيرة
+
+        hotelThumbs.forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                // تغيير الصورة الكبيرة
+                mainHotelImage.src = thumb.src;
+
+                // إزالة active من كل الصور
+                hotelThumbs.forEach(t => t.classList.remove('active'));
+
+                // إضافة active للصورة اللي اضغطت عليها
+                thumb.classList.add('active');
+            });
+        });
+    });
+
+</script>
