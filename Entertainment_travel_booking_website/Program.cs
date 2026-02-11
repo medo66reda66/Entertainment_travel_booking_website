@@ -7,7 +7,10 @@ using Entertainment_travel_booking_website.Utilities;
 using Entertainment_travel_booking_website.Utilities.IDbInitial;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Globalization;
 
 namespace Entertainment_travel_booking_website
 {
@@ -72,6 +75,21 @@ namespace Entertainment_travel_booking_website
             // Cart
             builder.Services.AddScoped<ICartRepository, CartRepository>();
 
+            builder.Services.AddLocalization(options => options.ResourcesPath = "Resourse");
+            const string culture = "ar";
+            var supportedCultures = new[] 
+            {
+                new CultureInfo(culture),
+                new CultureInfo("en"),
+                new CultureInfo("es"),
+            };
+            builder.Services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture(culture);
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
+
             // External Login With Google
             builder.Services.AddAuthentication()
             .AddGoogle("google", opt =>
@@ -89,7 +107,9 @@ namespace Entertainment_travel_booking_website
             var scope = app.Services.CreateScope();
             var serviceProvider = scope.ServiceProvider.GetService<IDbIntializer>();
             serviceProvider?.Initializ();
-             
+
+            app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
+
             // Configure the HTTP request pipeline
             if (!app.Environment.IsDevelopment())
             {

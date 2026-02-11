@@ -4,6 +4,7 @@ using Entertainment_travel_booking_website.modelVM;
 using Entertainment_travel_booking_website.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Linq.Expressions;
 
 namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
@@ -15,6 +16,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         private readonly IRepository<Trip> _tripRepository;
         private readonly IRepository<TripSupimage> _tripSupimageRepository;
         private readonly TripSupimgIRepository _tripSupimgIRepository;
+        private readonly IStringLocalizer<TripController> _localizer;
 
         // ====== ADD ONLY ======
         private readonly IRepository<Hotel> _hotelRepository;
@@ -29,6 +31,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             // ====== ADD ONLY ======
             IRepository<Hotel> hotelRepository,
             IRepository<AdditianActivities> activitiesRepository
+,
+            IStringLocalizer<TripController> localizer
         // ======================
         )
         {
@@ -39,6 +43,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             // ====== ADD ONLY ======
             _hotelRepository = hotelRepository;
             _activitiesRepository = activitiesRepository;
+            _localizer = localizer;
             // ======================
         }
 
@@ -153,7 +158,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
                     await _tripSupimageRepository.CommitAsync(cancellationtoken);
                 }
 
-                TempData["sucess-Notification"] = "Trip Created Successfully";
+                TempData["sucess-Notification"] =_localizer["AddTrip"].Value;
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -288,7 +293,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
             _tripRepository.Update(trip);
             await _tripRepository.CommitAsync(cancellationToken);
-            TempData["sucess-Notification"] = "Trip Edited Successfully";
+            TempData["sucess-Notification"] = _localizer["EditTrip"].Value;
 
             return RedirectToAction("Index");
         }
@@ -338,7 +343,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             // حذف الرحلة نفسها
             _tripRepository.Delete(trip);
             await _tripRepository.CommitAsync(cancellationToken);
-            TempData["sucess-Notification"] = "Trip Delete Successfully";
+            TempData["sucess-Notification"] = _localizer["DeleteTrip"].Value;
 
             return RedirectToAction(nameof(Index));
         }

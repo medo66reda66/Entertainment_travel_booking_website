@@ -99,7 +99,7 @@
 
                 <section class="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-100/50 p-8 border border-blue-50">
                     <h3 class="text-xl font-black text-gray-900 mb-6">تخصيص رحلتك</h3>
-                    <form asp-area="Customer" asp-controller="Home" asp-action="cart" method="post">
+                    <form asp-area="Customer" asp-controller="Home" asp-action="AddToCart" method="post">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="TripId" value="@Model.Trip.Id" />
 

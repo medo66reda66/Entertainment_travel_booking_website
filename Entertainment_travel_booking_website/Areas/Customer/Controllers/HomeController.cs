@@ -148,7 +148,7 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult cart(int TripId, List<int> SelectedActivityIds, int Quantity = 1) // <-- إضافة Quantity
+        public IActionResult AddToCart(int TripId, List<int> SelectedActivityIds, int Quantity = 1) // <-- إضافة Quantity
         {
             var userId = User.Identity?.Name ?? "guest";
 
@@ -169,7 +169,7 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
             _cartRepo.AddToCart(userId, TripId, SelectedActivityIds, totalPrice, Quantity);
 
    
-            return RedirectToAction("Cart");
+            return RedirectToAction(nameof(Cart));
         }
 
         [HttpPost]

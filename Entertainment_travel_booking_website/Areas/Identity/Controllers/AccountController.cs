@@ -1,4 +1,5 @@
-﻿using Entertainment_travel_booking_website.Models;
+﻿using Ecommerce.Utilities;
+using Entertainment_travel_booking_website.Models;
 using Entertainment_travel_booking_website.modelVM;
 using Entertainment_travel_booking_website.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;
@@ -16,6 +17,7 @@ namespace Entertainment_travel_booking_website.Areas.Identity.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly IRepository<ApplicationUserOtp> _otpRepository;
+        
 
         public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, IRepository<ApplicationUserOtp> otpRepository)
         {
@@ -64,6 +66,8 @@ namespace Entertainment_travel_booking_website.Areas.Identity.Controllers
                 TempData["error-Notification"] = "Registration failed! Please try again.";
                 return View(registerVM);
             }
+            await _userManager.AddToRoleAsync(user,DS.CUSTOMER_ROLE);
+
             TempData["sucess-Notification"] = "Registration successful! Please check your email to confirm your account.";
             return RedirectToAction(nameof(Login));
         }
