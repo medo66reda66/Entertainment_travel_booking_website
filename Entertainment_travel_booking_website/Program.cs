@@ -17,80 +17,88 @@ namespace Entertainment_travel_booking_website
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container
+            // ================= Add services =================
             builder.Services.AddControllersWithViews();
 
-            // DbContext
+            // ================= DbContext =================
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     builder.Configuration.GetConnectionString("DefaultConnection")
                 )
             );
 
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Option =>
+            // ================= Identity =================
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                Option.Password.RequiredLength = 6;
-                Option.Password.RequireLowercase = false;
-                Option.Password.RequireUppercase = false;
-                Option.Password.RequireNonAlphanumeric = false;
-                Option.User.RequireUniqueEmail = true;
-                Option.SignIn.RequireConfirmedEmail = true;
-
-            }).AddEntityFrameworkStores<ApplicationDbContext>()
+                options.Password.RequiredLength = 6;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-            // Configure cookie paths correctly for Identity Area
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
 
-            // Generic Repository
+            // ================= Generic Repository =================
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            // Trip
+            // ================= Trip Repositories =================
+            builder.Services.AddScoped<ITripRepository, TripRepository>();
             builder.Services.AddScoped<IRepository<Trip>, Repository<Trip>>();
             builder.Services.AddScoped<IRepository<TripSupimage>, Repository<TripSupimage>>();
             builder.Services.AddScoped<TripSupimgIRepository, TripSupImgsRepository>();
-            builder.Services.AddScoped<TripRepository>();
 
-            // Hotel
+            // ================= Hotel Repositories =================
             builder.Services.AddScoped<IRepository<Hotel>, Repository<Hotel>>();
             builder.Services.AddScoped<IRepository<HotelSupImg>, Repository<HotelSupImg>>();
             builder.Services.AddScoped<IRepository<ApplicationUserOtp>, Repository<ApplicationUserOtp>>();
             builder.Services.AddScoped<HotelSupimgIRepository, HotelSupImgsRepository>();
             builder.Services.AddScoped<HotelRepository>();
 
-            // Additional Activities
+            // ================= Additional Activities =================
             builder.Services.AddScoped<IRepository<AdditianActivities>, Repository<AdditianActivities>>();
             builder.Services.AddScoped<IRepository<ActivitiesSupImg>, Repository<ActivitiesSupImg>>();
             builder.Services.AddScoped<IAdditionalActivitySubImageRepository, AdditionalActivitySubImageRepository>();
             builder.Services.AddScoped<IAdditianActivitiesRepository, AdditianActivitiesRepository>();
-            // Cart
+
+            // ================= Cart =================
             builder.Services.AddScoped<ICartRepository, CartRepository>();
 
-            // External Login With Google
+            // ================= Orders =================
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+
+            // ================= External Login (Google) =================
             builder.Services.AddAuthentication()
-            .AddGoogle("google", opt =>
-            {
-                var googleAuth = builder.Configuration.GetSection("Authentication:Google");
-                opt.ClientId = googleAuth["ClientId"] ?? "";
-                opt.ClientSecret = googleAuth["ClientSecret"] ?? "";
-                opt.SignInScheme = IdentityConstants.ExternalScheme;
-            });
+                .AddGoogle("google", opt =>
+                {
+                    var googleAuth = builder.Configuration.GetSection("Authentication:Google");
+                    opt.ClientId = googleAuth["ClientId"] ?? "";
+                    opt.ClientSecret = googleAuth["ClientSecret"] ?? "";
+                    opt.SignInScheme = IdentityConstants.ExternalScheme;
+                });
 
-            builder.Services.AddScoped<IDbIntializer,DbInitializer>();
-
+            // ================= Database Initializer =================
+            builder.Services.AddScoped<IDbIntializer, DbInitializer>();
 
             var app = builder.Build();
-            var scope = app.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider.GetService<IDbIntializer>();
-            serviceProvider?.Initializ();
-             
-            // Configure the HTTP request pipeline
+
+            // ================= Initialize Database =================
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbInit = scope.ServiceProvider.GetRequiredService<IDbIntializer>();
+                dbInit.Initializ();
+            }
+
+            // ================= HTTP Request Pipeline =================
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -98,13 +106,13 @@ namespace Entertainment_travel_booking_website
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
 
-            app.UseAuthentication(); // مهم جدًا لتفعيل Identity
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapStaticAssets();
-
+            // ================= Routes =================
             app.MapControllerRoute(
                 name: "areas",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
@@ -113,7 +121,7 @@ namespace Entertainment_travel_booking_website
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}"
-            ).WithStaticAssets();
+            );
 
             app.Run();
         }

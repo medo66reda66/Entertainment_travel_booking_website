@@ -6,6 +6,7 @@ namespace Entertainment_travel_booking_website.Repository.IRepository
 {
     public interface ITripRepository
     {
+
         Task<IEnumerable<Trip>> GetAllAsync();    
         Task<Trip?> GetAsync(int id);             
         Task AddAsync(Trip trip);                 
