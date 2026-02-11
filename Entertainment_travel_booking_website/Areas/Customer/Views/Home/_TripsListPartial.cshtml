@@ -1,6 +1,7 @@
 ﻿@using Entertainment_travel_booking_website.Models
 @model IEnumerable<Trip>
 
+@* --- 1. جزء عرض كروت الرحلات --- *@
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
     @if (Model != null && Model.Any())
     {
@@ -53,3 +54,24 @@
         </p>
     }
 </div>
+
+@* --- 2. جزء أزرار الترقيم (Pagination) - وضعه هنا يجعله يتحدث مع كل AJAX request --- *@
+@if (ViewBag.TotalPages > 1)
+{
+    <div class="flex justify-center items-center gap-2 mt-16">
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            @* هنا السحر: بنقارن الرقم الحالي بالرقم اللي جاي من الـ Controller *@
+            var isActive = (ViewBag.CurrentPage == i);
+
+            <button type="button"
+                    onclick="loadPage(@i)"
+                    class="w-10 h-10 flex items-center justify-center rounded-xl font-black transition-all shadow-sm
+                    @(isActive
+                        ? "bg-blue-600 text-white scale-110 shadow-lg shadow-blue-200 pointer-events-none"
+                        : "bg-white text-gray-400 hover:bg-gray-50 border border-gray-100 cursor-pointer")">
+                @i
+            </button>
+        }
+    </div>
+}

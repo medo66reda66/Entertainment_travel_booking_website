@@ -119,11 +119,11 @@ namespace Entertainment_travel_booking_website
             var app = builder.Build();
 
             // ================= Initialize Database =================
-            using (var scope = app.Services.CreateScope())
-            {
-                var dbInit = scope.ServiceProvider.GetRequiredService<IDbIntializer>();
-                dbInit.Initializ();
-            }
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var dbInit = scope.ServiceProvider.GetRequiredService<IDbIntializer>();
+            //    dbInit.Initializ();
+            //}
 
             // ================= HTTP Request Pipeline =================
             var scope = app.Services.CreateScope();
