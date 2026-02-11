@@ -27,7 +27,7 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
         // ------------------- الصفحة الرئيسية + Pagination -------------------
         public IActionResult Index(int page = 1, string? destination = null, decimal? minPrice = null, decimal? maxPrice = null, int? hotelId = null, bool? available = null)
         {
-            int pageSize = 8;
+            int pageSize = 4;
             var query = _Context.trips.Include(t => t.Hotel).AsQueryable();
 
             // ======== فلترة الوجهة ========
@@ -69,6 +69,12 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
 
             // ======== قائمة الفنادق للفلتر ========
             ViewBag.Hotels = _Context.hotels.ToList();
+            // تشيك لو الطلب AJAX
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                // رجع Partial View فيه كروت الرحلات بس (بدون Layout)
+                return PartialView("_TripsListPartial", trips);
+            }
 
             return View(trips);
         }
@@ -94,16 +100,25 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
                 act.MainImg = act.ActivitiesSupImgs?.FirstOrDefault()?.SupImg ?? "default-activity.jpg";
             }
 
+            // 🔥 حساب السعر بعد الخصم
+            decimal finalTripPrice = trip.Price;
+
+            if (trip.DiscountedPrice != null && trip.DiscountedPrice > 0)
+            {
+                finalTripPrice -= (trip.Price * trip.DiscountedPrice.Value / 100);
+            }
+
             var vm = new TripDetailVM
             {
                 Trip = trip,
                 Hotel = trip.Hotel,
                 AdditionalActivities = activities,
-                TotalPrice = trip.Price
+                TotalPrice = finalTripPrice
             };
 
             return View(vm);
         }
+
         public IActionResult ActivityDetail(int id)
         {
             var activity = _Context.additianActivites

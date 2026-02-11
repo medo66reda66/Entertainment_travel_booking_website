@@ -60,7 +60,10 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
                 tracked: false,
                 cancellationToken: cancellationToken
             );
-
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_TripsListPartial", trips);
+            }
             return View(trips);
         }
 
