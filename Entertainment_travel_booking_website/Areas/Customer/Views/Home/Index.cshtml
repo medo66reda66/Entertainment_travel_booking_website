@@ -8,6 +8,21 @@
     int currentPage = ViewBag.CurrentPage ?? 1;
     int totalPages = ViewBag.TotalPages ?? 1;
 }
+@section Scripts {
+
+    @if (TempData["sucess-Notification"] != null)
+    {
+        <script>
+            toastr.success('@TempData["sucess-Notification"]');
+        </script>
+    }
+    else if (TempData["error-Notification"] != null)
+    {
+        <script>
+            toastr.error('@TempData["error-Notification"]');
+        </script>
+    }
+}
 @{
     ViewData["ShowHero"] = true;
 }
