@@ -20,6 +20,9 @@ namespace Entertainment_travel_booking_website.DataBase
         public DbSet<ApplicationUserOtp> ApplicationUserOtps { get; set; }
         public DbSet<Room> rooms { get; set; }
         public DbSet<CartItem> cartItems { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+
 
         //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         //{

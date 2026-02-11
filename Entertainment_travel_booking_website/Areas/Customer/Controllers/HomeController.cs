@@ -7,6 +7,7 @@ using Entertainment_travel_booking_website.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
 {
@@ -202,5 +203,25 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
             TempData["PaymentMessage"] = "تمت عملية الدفع بنجاح ✅";
             return RedirectToAction("Cart");
         }
+        //[Authorize]
+        //public IActionResult MyTrips()
+        //{
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        //    var orders = oreder.GetAll(o => o.UserId == userId, includeProperties: "Trip,Trip.Hotel");
+
+        //    var tripsList = orders.Select(o => new MyTripsVM
+        //    {
+        //        OrderId = o.Id,
+        //        TripName = o.Trip.Place,
+        //        HotelName = o.Trip.Hotel != null ? o.Trip.Hotel.Name : "",
+        //        Price = o.TotalPrice,
+        //        Quantity = o.Quantity,
+        //        BookingDate = o.OrderDate
+        //    }).ToList();
+
+        //    return View(tripsList);
+        //}
+
     }
 }
