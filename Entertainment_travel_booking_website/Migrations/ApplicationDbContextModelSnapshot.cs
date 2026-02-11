@@ -260,6 +260,76 @@ namespace Entertainment_travel_booking_website.Migrations
                     b.ToTable("hotelSupImgs");
                 });
 
+            modelBuilder.Entity("Entertainment_travel_booking_website.Models.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CVV")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CardNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExpiryDate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("OrderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("Entertainment_travel_booking_website.Models.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TripId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TripName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItems");
+                });
+
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.Room", b =>
                 {
                     b.Property<int>("ID")
@@ -561,6 +631,17 @@ namespace Entertainment_travel_booking_website.Migrations
                     b.Navigation("Hotel");
                 });
 
+            modelBuilder.Entity("Entertainment_travel_booking_website.Models.OrderItem", b =>
+                {
+                    b.HasOne("Entertainment_travel_booking_website.Models.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+                });
+
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.Room", b =>
                 {
                     b.HasOne("Entertainment_travel_booking_website.Models.Hotel", "Hotel")
@@ -679,6 +760,11 @@ namespace Entertainment_travel_booking_website.Migrations
                     b.Navigation("HotelSupImgs");
 
                     b.Navigation("Rooms");
+                });
+
+            modelBuilder.Entity("Entertainment_travel_booking_website.Models.Order", b =>
+                {
+                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("Entertainment_travel_booking_website.Models.Trip", b =>

@@ -2,33 +2,43 @@
 @model ValidateOtpVM
 
 @{
-    ViewData["Title"] = "ValidateOtp";
+    ViewData["Title"] = "تأكيد رمز التحقق";
 }
 
-<div class="container">
-    <h1>ValidateOtp</h1>
-
-    <h4>VolidateOtpVM</h4>
-    <hr />
-    <div class="row">
-        <div class="col-md-4">
-            <form asp-action="ValidateOtp">
-                <input type="hidden" name="Applicationuserid" value="@Model.ApplicationUserId" />
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="OtpCode" class="control-label"></label>
-                    <input asp-for="OtpCode" class="form-control" />
-                    <span asp-validation-for="OtpCode" class="text-danger"></span>
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-primary" />
-                </div>
-            </form>
+<div class="bg-white/90 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-white/50">
+    <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-orange-50 text-orange-600 rounded-full mb-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
         </div>
+        <h1 class="text-3xl font-black text-gray-900 mb-2">رمز التحقق</h1>
+        <p class="text-gray-500 font-bold text-sm leading-relaxed px-4">أدخل الرمز المكون من 6 أرقام الذي أرسلناه إلى بريدك الإلكتروني.</p>
     </div>
 
-    <div>
-        <a asp-action="Index">Back to List</a>
+    <form asp-action="ValidateOtp" method="post" class="space-y-6 text-right">
+        <input type="hidden" asp-for="ApplicationUserId" />
+        <div asp-validation-summary="ModelOnly" class="text-danger text-xs font-bold mb-4 mr-2"></div>
+
+        <div class="relative">
+            <label asp-for="OtpCode" class="block text-xs font-black text-blue-600 uppercase mb-2 mr-2">رمز الـ OTP</label>
+            <input asp-for="OtpCode"
+                   class="w-full bg-gray-50 border-2 border-gray-100 p-5 rounded-2xl outline-none focus:border-orange-500 focus:bg-white transition-all font-black text-center text-2xl tracking-[1em] text-gray-700 placeholder:text-gray-200"
+                   placeholder="000000" maxlength="6" />
+            <span asp-validation-for="OtpCode" class="text-red-500 text-[10px] font-bold mt-1 block mr-2"></span>
+        </div>
+
+        <button type="submit" class="w-full bg-gray-900 text-white py-5 rounded-[1.8rem] font-black text-lg shadow-xl hover:bg-blue-600 transition-all active:scale-95 flex items-center justify-center gap-2">
+            <span>تحقق الآن</span>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        </button>
+    </form>
+
+    <div class="mt-8 pt-6 border-t border-gray-100 text-center">
+        <p class="text-gray-400 text-xs font-bold">
+            لم يصلك الرمز؟
+            <a asp-action="ForgotPassword" class="text-orange-500 hover:underline">إعادة طلب رمز جديد</a>
+        </p>
     </div>
 </div>
 

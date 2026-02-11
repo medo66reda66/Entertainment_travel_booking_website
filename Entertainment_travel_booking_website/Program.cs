@@ -3,9 +3,14 @@ using Entertainment_travel_booking_website.DataBase;
 using Entertainment_travel_booking_website.Models;
 using Entertainment_travel_booking_website.Repository;
 using Entertainment_travel_booking_website.Repository.IRepository;
+using Entertainment_travel_booking_website.Utilities;
+using Entertainment_travel_booking_website.Utilities.IDbInitial;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using System.Globalization;
 
 namespace Entertainment_travel_booking_website
 {
@@ -15,60 +20,78 @@ namespace Entertainment_travel_booking_website
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container
+            // ================= Add services =================
             builder.Services.AddControllersWithViews();
 
-            // DbContext
+            // ================= DbContext =================
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("default")
+                    builder.Configuration.GetConnectionString("DefaultConnection")
                 )
             );
 
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Option =>
+            // ================= Identity =================
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                Option.Password.RequiredLength = 6;
-                Option.Password.RequireLowercase = false;
-                Option.Password.RequireUppercase = false;
-                Option.Password.RequireNonAlphanumeric = false;
-                Option.User.RequireUniqueEmail = true;
-                Option.SignIn.RequireConfirmedEmail = true;
-
-            }).AddEntityFrameworkStores<ApplicationDbContext>()
+                options.Password.RequiredLength = 6;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-            // Configure cookie paths correctly for Identity Area
             builder.Services.ConfigureApplicationCookie(options =>
             {
                 options.LoginPath = "/Identity/Account/Login";
                 options.AccessDeniedPath = "/Identity/Account/AccessDenied";
             });
 
-            // Generic Repository
+            // ================= Generic Repository =================
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
-            // Trip
+            // ================= Trip Repositories =================
+            builder.Services.AddScoped<ITripRepository, TripRepository>();
             builder.Services.AddScoped<IRepository<Trip>, Repository<Trip>>();
             builder.Services.AddScoped<IRepository<TripSupimage>, Repository<TripSupimage>>();
             builder.Services.AddScoped<TripSupimgIRepository, TripSupImgsRepository>();
-            builder.Services.AddScoped<TripRepository>();
 
-            // Hotel
+            // ================= Hotel Repositories =================
             builder.Services.AddScoped<IRepository<Hotel>, Repository<Hotel>>();
             builder.Services.AddScoped<IRepository<HotelSupImg>, Repository<HotelSupImg>>();
             builder.Services.AddScoped<IRepository<ApplicationUserOtp>, Repository<ApplicationUserOtp>>();
             builder.Services.AddScoped<HotelSupimgIRepository, HotelSupImgsRepository>();
             builder.Services.AddScoped<HotelRepository>();
 
-            // Additional Activities
+            // ================= Additional Activities =================
             builder.Services.AddScoped<IRepository<AdditianActivities>, Repository<AdditianActivities>>();
             builder.Services.AddScoped<IRepository<ActivitiesSupImg>, Repository<ActivitiesSupImg>>();
             builder.Services.AddScoped<IAdditionalActivitySubImageRepository, AdditionalActivitySubImageRepository>();
             builder.Services.AddScoped<IAdditianActivitiesRepository, AdditianActivitiesRepository>();
-            // Cart
+
+            // ================= Cart =================
             builder.Services.AddScoped<ICartRepository, CartRepository>();
+
+            // ================= Orders =================
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+            builder.Services.AddLocalization(options => options.ResourcesPath = "Resourse");
+            const string culture = "ar";
+            var supportedCultures = new[] 
+            {
+                new CultureInfo(culture),
+                new CultureInfo("en"),
+                new CultureInfo("es"),
+            };
+            builder.Services.Configure<RequestLocalizationOptions>(options =>
+            {
+                options.DefaultRequestCulture = new RequestCulture(culture);
+                options.SupportedCultures = supportedCultures;
+                options.SupportedUICultures = supportedCultures;
+            });
 
             // External Login With Google
             builder.Services.AddAuthentication()
@@ -80,7 +103,34 @@ namespace Entertainment_travel_booking_website
                 opt.SignInScheme = IdentityConstants.ExternalScheme;
             });
 
+            // ================= External Login (Google) =================
+            builder.Services.AddAuthentication()
+                .AddGoogle("google", opt =>
+                {
+                    var googleAuth = builder.Configuration.GetSection("Authentication:Google");
+                    opt.ClientId = googleAuth["ClientId"] ?? "";
+                    opt.ClientSecret = googleAuth["ClientSecret"] ?? "";
+                    opt.SignInScheme = IdentityConstants.ExternalScheme;
+                });
+
+            // ================= Database Initializer =================
+            builder.Services.AddScoped<IDbIntializer, DbInitializer>();
+
             var app = builder.Build();
+
+            // ================= Initialize Database =================
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbInit = scope.ServiceProvider.GetRequiredService<IDbIntializer>();
+                dbInit.Initializ();
+            }
+
+            // ================= HTTP Request Pipeline =================
+            var scope = app.Services.CreateScope();
+            var serviceProvider = scope.ServiceProvider.GetService<IDbIntializer>();
+            serviceProvider?.Initializ();
+
+            app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
 
             // Configure the HTTP request pipeline
             if (!app.Environment.IsDevelopment())
@@ -90,13 +140,13 @@ namespace Entertainment_travel_booking_website
             }
 
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
 
-            app.UseAuthentication(); // مهم جدًا لتفعيل Identity
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapStaticAssets();
-
+            // ================= Routes =================
             app.MapControllerRoute(
                 name: "areas",
                 pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
@@ -105,7 +155,7 @@ namespace Entertainment_travel_booking_website
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}"
-            ).WithStaticAssets();
+            );
 
             app.Run();
         }

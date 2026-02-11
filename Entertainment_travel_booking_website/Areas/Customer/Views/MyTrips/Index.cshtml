@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Entertainment_travel_booking_website.Models.Order>
+@{
+    Layout = "_Layout";
+}
+
+<h2 class="text-3xl font-bold mb-6 text-center">My Trips</h2>
+
+<div class="space-y-6">
+    @foreach (var order in Model)
+    {
+        <div class="p-6 bg-gray-100 rounded-2xl shadow-md">
+            <p class="font-bold">Order Date: @order.OrderDate.ToString("dd/MM/yyyy")</p>
+            <p class="font-semibold">Total Price: @order.TotalPrice EGP</p>
+
+            <div class="mt-4">
+                @foreach (var item in order.OrderItems)
+                {
+                    <div class="p-2 bg-white rounded-lg mb-2 shadow-sm">
+                        <p class="font-bold">@item.TripName</p>
+                        <p>Price: @item.Price EGP</p>
+                        <p>Quantity: @item.Quantity</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

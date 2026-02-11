@@ -1,17 +1,22 @@
-﻿using Entertainment_travel_booking_website.Models;
+﻿using Ecommerce.Utilities;
+using Entertainment_travel_booking_website.Models;
 using Entertainment_travel_booking_website.modelVM;
 using Entertainment_travel_booking_website.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Linq.Expressions;
 
 namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
     public class TripController : Controller
     {
         private readonly IRepository<Trip> _tripRepository;
         private readonly IRepository<TripSupimage> _tripSupimageRepository;
         private readonly TripSupimgIRepository _tripSupimgIRepository;
+        private readonly IStringLocalizer<TripController> _localizer;
 
         // ====== ADD ONLY ======
         private readonly IRepository<Hotel> _hotelRepository;
@@ -26,6 +31,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             // ====== ADD ONLY ======
             IRepository<Hotel> hotelRepository,
             IRepository<AdditianActivities> activitiesRepository
+,
+            IStringLocalizer<TripController> localizer
         // ======================
         )
         {
@@ -36,6 +43,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             // ====== ADD ONLY ======
             _hotelRepository = hotelRepository;
             _activitiesRepository = activitiesRepository;
+            _localizer = localizer;
             // ======================
         }
 
@@ -52,13 +60,18 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
                 tracked: false,
                 cancellationToken: cancellationToken
             );
-
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView("_TripsListPartial", trips);
+            }
             return View(trips);
         }
 
 
 
         // ----- Create -----
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
         public async Task<IActionResult> Create()
         {
             ViewBag.Hotels = await _hotelRepository.GetAsync() ?? new List<Hotel>();
@@ -68,7 +81,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-     
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
         public async Task<IActionResult> Create(TripCreateVM tripcreateVM, CancellationToken cancellationtoken)
         {
             if (!ModelState.IsValid)
@@ -148,7 +161,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
                     await _tripSupimageRepository.CommitAsync(cancellationtoken);
                 }
 
-                TempData["sucess-Notification"] = "Trip Created Successfully";
+                TempData["sucess-Notification"] =_localizer["AddTrip"].Value;
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
@@ -161,6 +174,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         }
 
         // ----- Edit -----
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Edit(int id, CancellationToken cancellationToken)
         {
             var trip = await _tripRepository.GetOneAsync(
@@ -197,6 +212,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Edit(TripEditVM tripeEditVM, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid) return View(tripeEditVM);
@@ -280,13 +296,15 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
             _tripRepository.Update(trip);
             await _tripRepository.CommitAsync(cancellationToken);
-            TempData["sucess-Notification"] = "Trip Edited Successfully";
+            TempData["sucess-Notification"] = _localizer["EditTrip"].Value;
 
             return RedirectToAction("Index");
         }
 
 
         // ----------------- Delete Trip -----------------
+        [HttpGet]
+        [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE}")]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
             // جلب الرحلة مع الصور الفرعية
@@ -328,7 +346,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             // حذف الرحلة نفسها
             _tripRepository.Delete(trip);
             await _tripRepository.CommitAsync(cancellationToken);
-            TempData["sucess-Notification"] = "Trip Delete Successfully";
+            TempData["sucess-Notification"] = _localizer["DeleteTrip"].Value;
 
             return RedirectToAction(nameof(Index));
         }
