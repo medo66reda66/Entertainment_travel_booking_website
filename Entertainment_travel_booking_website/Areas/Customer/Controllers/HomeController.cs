@@ -100,16 +100,25 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
                 act.MainImg = act.ActivitiesSupImgs?.FirstOrDefault()?.SupImg ?? "default-activity.jpg";
             }
 
+            // 🔥 حساب السعر بعد الخصم
+            decimal finalTripPrice = trip.Price;
+
+            if (trip.DiscountedPrice != null && trip.DiscountedPrice > 0)
+            {
+                finalTripPrice -= (trip.Price * trip.DiscountedPrice.Value / 100);
+            }
+
             var vm = new TripDetailVM
             {
                 Trip = trip,
                 Hotel = trip.Hotel,
                 AdditionalActivities = activities,
-                TotalPrice = trip.Price
+                TotalPrice = finalTripPrice
             };
 
             return View(vm);
         }
+
         public IActionResult ActivityDetail(int id)
         {
             var activity = _Context.additianActivites
