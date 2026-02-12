@@ -8,6 +8,7 @@
 
 <main class="w-[90%] max-w-7xl mx-auto px-4 py-12 lg:py-20 font-['Cairo'] antialiased">
 
+    <!-- ==================== HEADER ==================== -->
     <header class="text-center mb-16 animate-fade-in">
 
         @if (Model.Trip.Status)
@@ -55,14 +56,13 @@
                 </span>
             }
         </div>
-
     </header>
 
+    <!-- ==================== MAIN GRID ==================== -->
     <div class="grid lg:grid-cols-3 gap-12">
 
-        <!-- صور الرحلة -->
+        <!-- ==================== صور الرحلة ==================== -->
         <div class="lg:col-span-2 space-y-12">
-
             <section>
                 <h2 class="text-2xl font-black text-gray-800 mb-6 flex items-center gap-3">
                     <span class="w-2 h-8 bg-blue-600 rounded-full"></span>
@@ -91,6 +91,8 @@
                     </div>
                 }
             </section>
+
+            <!-- ==================== قسم الفندق ==================== -->
             @if (Model.Hotel != null)
             {
                 <section class="bg-gray-50 rounded-[3rem] p-8 border border-gray-100">
@@ -135,13 +137,11 @@
 
                 </section>
             }
-
         </div>
 
-        <!-- تخصيص الرحلة -->
+        <!-- ==================== تخصيص الرحلة ==================== -->
         <div class="lg:col-span-1">
             <div class="sticky top-8 space-y-6">
-
                 <section class="bg-white rounded-[2.5rem] shadow-2xl p-8 border border-blue-50">
 
                     <h3 class="text-xl font-black text-gray-900 mb-6">
@@ -149,7 +149,6 @@
                     </h3>
 
                     <form action="/Customer/Payment/Checkout" method="get">
-                        <!-- Trip ID -->
                         <input type="hidden" name="tripId" value="@Model.Trip.Id" />
 
                         <!-- الأنشطة -->
@@ -210,27 +209,26 @@
                             </h3>
                         </div>
 
-                        <!-- زرار الحجز المباشر -->
+                        <!-- hidden input للسعر النهائي -->
+                        <input type="hidden" name="ClientTotalPrice" id="clientTotalPrice" />
+
                         <button type="submit"
                                 class="w-full py-4 rounded-2xl font-bold text-white
-               bg-gradient-to-r from-green-600 via-green-500 to-green-700
-               hover:from-green-700 hover:via-green-600 hover:to-green-800
-               shadow-lg hover:shadow-2xl transition-all duration-300">
-                            Book Now 
+                                       bg-gradient-to-r from-green-600 via-green-500 to-green-700
+                                       hover:from-green-700 hover:via-green-600 hover:to-green-800
+                                       shadow-lg hover:shadow-2xl transition-all duration-300">
+                            Book Now
                         </button>
                     </form>
 
                 </section>
-                <!-- الزرار الجديد -->
-           
-
-
-                </div>
             </div>
         </div>
+
     </div>
 </main>
 
+<!-- ==================== SCRIPT ==================== -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
 
@@ -247,59 +245,53 @@
             });
 
             const finalTotal = (basePrice + extra) * quantity;
-
             totalEl.textContent = finalTotal.toFixed(2);
+
+            // Hidden input للسعر النهائي
+            document.getElementById('clientTotalPrice').value = finalTotal.toFixed(2);
         }
 
         document.querySelectorAll('.activity-checkbox').forEach(cb => {
             cb.addEventListener('change', updateTotal);
         });
 
-        window.changeCount = function (amount) {
+        window.changeCount = function(amount) {
             const input = document.getElementById('tripQuantity');
             let currentValue = parseInt(input.value);
             let newValue = currentValue + amount;
-
             if (newValue >= 1) {
                 input.value = newValue;
                 updateTotal();
             }
         }
 
-    });
         // تغيير الصورة الرئيسية عند الضغط على أي صورة مصغرة
-    const tripThumbs = document.querySelectorAll('.trip-thumb');
-    const mainTripImage = document.getElementById('mainTripImage');
-
-    tripThumbs.forEach(thumb => {
-        thumb.addEventListener('click', () => {
-            // تغيير الصورة الكبيرة
-            mainTripImage.src = thumb.dataset.full;
-
-            // إزالة active من كل الصور
-            tripThumbs.forEach(t => t.classList.remove('active'));
-
-            // إضافة active للصورة اللي اضغطت عليها
-            thumb.classList.add('active');
-        });
-    });
-
-    if (document.querySelectorAll('.hotel-thumb').length > 0) {
-        const hotelThumbs = document.querySelectorAll('.hotel-thumb');
-        const mainHotelImage = document.getElementById('mainHotelImage');
-
-        hotelThumbs.forEach(thumb => {
+        const tripThumbs = document.querySelectorAll('.trip-thumb');
+        const mainTripImage = document.getElementById('mainTripImage');
+        tripThumbs.forEach(thumb => {
             thumb.addEventListener('click', () => {
-                mainHotelImage.src = thumb.dataset.full;
-
-                hotelThumbs.forEach(t => t.classList.remove('active'));
+                mainTripImage.src = thumb.dataset.full;
+                tripThumbs.forEach(t => t.classList.remove('active'));
                 thumb.classList.add('active');
             });
         });
-    }
 
+        if (document.querySelectorAll('.hotel-thumb').length > 0) {
+            const hotelThumbs = document.querySelectorAll('.hotel-thumb');
+            const mainHotelImage = document.getElementById('mainHotelImage');
+            hotelThumbs.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    mainHotelImage.src = thumb.dataset.full;
+                    hotelThumbs.forEach(t => t.classList.remove('active'));
+                    thumb.classList.add('active');
+                });
+            });
+        }
+
+    });
 </script>
 
+<!-- ==================== STYLE ==================== -->
 <style>
     body {
         background-color: #fcfcfd;

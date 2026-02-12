@@ -81,6 +81,35 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
         }
 
         // ------------------- تفاصيل الرحلة -------------------
+        public IActionResult ActivityDetail(int id)
+        {
+            var activity = _Context.additianActivites
+                .Include(a => a.ActivitiesSupImgs)
+                .FirstOrDefault(a => a.Id == id);
+
+            if (activity == null) return NotFound();
+
+            return View(activity);
+        }
+        public IActionResult HotelDetail(int id)
+        {
+            var hotel = _Context.hotels
+                .Include(h => h.HotelSupImgs)  
+                .Include(h => h.Rooms)         
+                .FirstOrDefault(h => h.Id == id);
+
+            if (hotel == null) return NotFound();
+
+        
+            var vm = new HotelDetailVM
+            {
+                Hotel = hotel,
+                Images = hotel.HotelSupImgs.ToList(),
+                Rooms = hotel.Rooms.ToList()
+            };
+
+            return View(vm);
+        }
         public IActionResult Detail(int id)
         {
             var trip = _Context.trips
@@ -120,89 +149,64 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
             return View(vm);
         }
 
-        public IActionResult ActivityDetail(int id)
-        {
-            var activity = _Context.additianActivites
-                .Include(a => a.ActivitiesSupImgs)
-                .FirstOrDefault(a => a.Id == id);
 
-            if (activity == null) return NotFound();
-
-            return View(activity);
-        }
-        public IActionResult HotelDetail(int id)
-        {
-            var hotel = _Context.hotels
-                .Include(h => h.HotelSupImgs)  
-                .Include(h => h.Rooms)         
-                .FirstOrDefault(h => h.Id == id);
-
-            if (hotel == null) return NotFound();
-
-        
-            var vm = new HotelDetailVM
-            {
-                Hotel = hotel,
-                Images = hotel.HotelSupImgs.ToList(),
-                Rooms = hotel.Rooms.ToList()
-            };
-
-            return View(vm);
-        }
-
-
-
-        // ------------------- صفحة Cart -------------------
-        [HttpGet]
-        public IActionResult Cart()
-        {
-            var userId = User.Identity?.Name ?? "guest";
-         
-            var cartItems = _cartRepo.GetCartItems(userId);
-            return View(cartItems);
-        }
-
-        [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult cart(int TripId, List<int> SelectedActivityIds, int Quantity = 1) // <-- إضافة Quantity
+        public IActionResult BookNow(int tripId, int quantity, List<int>? SelectedActivityIds)
         {
-            var userId = User.Identity?.Name ?? "guest";
-
-            // التأكد من وجود الرحلة
-            var trip = _Context.trips.FirstOrDefault(t => t.Id == TripId);
+            var trip = _Context.trips.FirstOrDefault(t => t.Id == tripId);
             if (trip == null) return NotFound();
 
-          
             SelectedActivityIds ??= new List<int>();
-  var activities = _Context.additianActivites
-                .Where(a => SelectedActivityIds.Contains(a.Id))
-                .ToList();
 
-       
-            decimal totalPrice = (trip.Price + activities.Sum(a => a.Price)) * Quantity;
+            // حساب سعر الرحلة بعد الخصم
+            decimal finalPrice = trip.Price;
+            if (trip.DiscountedPrice != null && trip.DiscountedPrice > 0)
+            {
+                finalPrice -= (trip.Price * trip.DiscountedPrice.Value / 100);
+            }
 
-           
-            _cartRepo.AddToCart(userId, TripId, SelectedActivityIds, totalPrice, Quantity);
+            // ===== حساب سعر الأنشطة الإضافية =====
+            decimal activitiesTotal = 0;
+            if (SelectedActivityIds != null && SelectedActivityIds.Count > 0)
+            {
+                activitiesTotal = _Context.tripAdditianActivities
+                    .Where(x => SelectedActivityIds.Contains(x.additianActivitiesId))
+                    .Select(x => x.additianActivities.Price)
+                    .Sum();
+            }
 
-   
-            return RedirectToAction("Cart");
-        }
+            // السعر النهائي للفرد الواحد = سعر الرحلة + سعر الأنشطة
+            decimal finalUnitPrice = finalPrice + activitiesTotal;
 
-        [HttpPost]
-        public IActionResult RemoveFromCart(int cartItemId)
+            // السعر النهائي الإجمالي = السعر للفرد × الكمية
+            decimal totalPrice = finalUnitPrice * quantity;
+
+            // إنشاء Order مع OrderItems (للتوافق مع PaymentController)
+            var order = new Order
+            {
+                Quantity = quantity,
+                TotalPrice = totalPrice,
+                OrderDate = DateTime.Now,
+                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                OrderItems = new List<OrderItem>
         {
-            _cartRepo.RemoveCartItem(cartItemId);
-            return RedirectToAction("Cart");
+            new OrderItem
+            {
+                TripId = trip.Id,
+                TripName = trip.Place,
+                Price = finalUnitPrice, // سعر الفرد الواحد شامل الأنشطة
+                Quantity = quantity
+            }
         }
+            };
 
-        [HttpPost]
-        public IActionResult Payment()
-        {
-            var userId = User.Identity?.Name ?? "guest";
-            _cartRepo.ClearCart(userId);
-            TempData["PaymentMessage"] = "تمت عملية الدفع بنجاح ✅";
-            return RedirectToAction("Cart");
+            _Context.Orders.Add(order);
+            _Context.SaveChanges();
+
+            return RedirectToAction("Index");
         }
+        // ------------------- صفحة Cart -------------------
+
         //[Authorize]
         //public IActionResult MyTrips()
         //{
