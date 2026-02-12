@@ -198,6 +198,32 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
                 Quantity = quantity
             }
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddToCart(int TripId, List<int> SelectedActivityIds, int Quantity = 1) // <-- إضافة Quantity
+        {
+            var userId = User.Identity?.Name ?? "guest";
+
+            // التأكد من وجود الرحلة
+            var trip = _Context.trips.FirstOrDefault(t => t.Id == TripId);
+            if (trip == null) return NotFound();
+
+          
+            SelectedActivityIds ??= new List<int>();
+  var activities = _Context.additianActivites
+                .Where(a => SelectedActivityIds.Contains(a.Id))
+                .ToList();
+
+       
+            decimal totalPrice = (trip.Price + activities.Sum(a => a.Price)) * Quantity;
+
+           
+            _cartRepo.AddToCart(userId, TripId, SelectedActivityIds, totalPrice, Quantity);
+
+   
+            return RedirectToAction(nameof(Cart));
+        }
             };
 
             _Context.Orders.Add(order);
