@@ -6,7 +6,9 @@ using Entertainment_travel_booking_website.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.Extensions.Localization;
 using System.Linq.Expressions;
+using Travel_booking_website;
 
 namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 {
@@ -17,15 +19,18 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         private readonly IAdditianActivitiesRepository _activitiesRepo;
         private readonly IAdditionalActivitySubImageRepository _subImageRepo;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IStringLocalizer<Activity1Controller> _stringLocalizer;
 
         public AdditionalActivitiesController(
             IAdditianActivitiesRepository activitiesRepo,
             IAdditionalActivitySubImageRepository subImageRepo,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            IStringLocalizer<Activity1Controller> stringLocalizer)
         {
             _activitiesRepo = activitiesRepo;
             _subImageRepo = subImageRepo;
             _webHostEnvironment = webHostEnvironment;
+            _stringLocalizer = stringLocalizer;
         }
 
         // ----------------- Index -----------------
@@ -88,7 +93,9 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             }
 
             await _activitiesRepo.AddAsync(activity);
-            TempData["sucess-Notification"] = "Activity Create Successfully";
+
+            var massage = _stringLocalizer["AddActivity"].Value;
+            TempData["sucess-Notification"] = massage;
 
             return RedirectToAction(nameof(Index));
         }
@@ -164,7 +171,9 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             }
 
             await _activitiesRepo.UpdateAsync(activity);
-            TempData["sucess-Notification"] = "Activity Edit Successfully";
+
+            var massage = _stringLocalizer["EditActivity"].Value;
+            TempData["sucess-Notification"] = massage;
 
             return RedirectToAction(nameof(Index));
         }
@@ -203,7 +212,9 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
           
             await _activitiesRepo.DeleteAsync(activity.Id);
-            TempData["sucess-Notification"] = "Activity Delete Successfully";
+
+            var massage = _stringLocalizer["DeleteActivity"].Value;
+            TempData["sucess-Notification"] = massage;
 
             return RedirectToAction(nameof(Index));
         }

@@ -5,8 +5,10 @@ using Entertainment_travel_booking_website.Repository;
 using Entertainment_travel_booking_website.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Travel_booking_website;
 
 namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 {
@@ -18,17 +20,20 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         private readonly IRepository<HotelSupImg> _hotelSupimageRepository;
         private readonly HotelSupimgIRepository _hotelSupImgsRepository;
         private readonly IRepository<Room> _roomRepository;
+        private readonly IStringLocalizer<Hotel1Controller> _stringLocalizer;
 
         public HotelController(
             IRepository<Hotel> hotelRepository,
             IRepository<Room> roomRepository,
             IRepository<HotelSupImg> hotelSupimageRepository,
-            HotelSupimgIRepository hotelSupImgsRepository) 
+            HotelSupimgIRepository hotelSupImgsRepository,
+            IStringLocalizer<Hotel1Controller> stringLocalizer)
         {
             _hotelRepository = hotelRepository;
             _roomRepository = roomRepository;
             _hotelSupimageRepository = hotelSupimageRepository;
             _hotelSupImgsRepository = hotelSupImgsRepository;
+            _stringLocalizer = stringLocalizer;
         }
 
         //----------------- Index -----------------
@@ -110,7 +115,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
                     }
                     await _hotelSupimageRepository.CommitAsync(cancellationToken);
                 }
-                TempData["sucess-Notification"] = "Hotel Created Successfully";
+                var Message = _stringLocalizer["AddHotel"].Value;
+                TempData["sucess-Notification"] = Message;
             }
             catch (Exception ex)
             {
@@ -234,7 +240,8 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             // حفظ التحديثات
             _hotelRepository.Update(hotel);
             await _hotelRepository.CommitAsync(cancellationToken);
-            TempData["sucess-Notification"] = "Hotel Edit Successfully";
+            var Message = _stringLocalizer["EditHotel"].Value;
+            TempData["sucess-Notification"] = Message;
 
             return RedirectToAction("Index");
         }
@@ -283,7 +290,9 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             // حذف الفندق نفسه
             _hotelRepository.Delete(hotel);
             await _hotelRepository.CommitAsync(cancellationToken);
-            TempData["sucess-Notification"] = "Hotel Delete Successfully";
+
+            var Message = _stringLocalizer["DeleteHotel"].Value;
+            TempData["sucess-Notification"] = Message;
 
             return RedirectToAction("Index");
         }

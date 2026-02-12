@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Stripe;
 using System.Globalization;
 
 namespace Entertainment_travel_booking_website
@@ -26,7 +27,7 @@ namespace Entertainment_travel_booking_website
             // ================= DbContext =================
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    builder.Configuration.GetConnectionString("DefaultConnection")
+                    builder.Configuration.GetConnectionString("default")
                 )
             );
 
@@ -94,16 +95,18 @@ namespace Entertainment_travel_booking_website
             });
 
             // External Login With Google
-            builder.Services.AddAuthentication()
-            .AddGoogle("google", opt =>
-            {
-                var googleAuth = builder.Configuration.GetSection("Authentication:Google");
-                opt.ClientId = googleAuth["ClientId"] ?? "";
-                opt.ClientSecret = googleAuth["ClientSecret"] ?? "";
-                opt.SignInScheme = IdentityConstants.ExternalScheme;
-            });
+            //builder.Services.AddAuthentication()
+            //.AddGoogle("google", opt =>
+            //{
+            //    var googleAuth = builder.Configuration.GetSection("Authentication:Google");
+            //    opt.ClientId = googleAuth["ClientId"] ?? "";
+            //    opt.ClientSecret = googleAuth["ClientSecret"] ?? "";
+            //    opt.SignInScheme = IdentityConstants.ExternalScheme;
+            //});
 
             // ================= External Login (Google) =================
+
+
             builder.Services.AddAuthentication()
                 .AddGoogle("google", opt =>
                 {
@@ -113,7 +116,10 @@ namespace Entertainment_travel_booking_website
                     opt.SignInScheme = IdentityConstants.ExternalScheme;
                 });
 
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
+
             // ================= Database Initializer =================
+
             builder.Services.AddScoped<IDbIntializer, DbInitializer>();
 
             var app = builder.Build();
@@ -126,8 +132,8 @@ namespace Entertainment_travel_booking_website
             }
 
             // ================= HTTP Request Pipeline =================
-            var scope = app.Services.CreateScope();
-            var serviceProvider = scope.ServiceProvider.GetService<IDbIntializer>();
+            var scopeS = app.Services.CreateScope();
+            var serviceProvider = scopeS.ServiceProvider.GetService<IDbIntializer>();
             serviceProvider?.Initializ();
 
             app.UseRequestLocalization(app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>().Value);
