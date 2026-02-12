@@ -94,14 +94,14 @@ namespace Entertainment_travel_booking_website
             });
 
             // External Login With Google
-            builder.Services.AddAuthentication()
-            .AddGoogle("google", opt =>
-            {
-                var googleAuth = builder.Configuration.GetSection("Authentication:Google");
-                opt.ClientId = googleAuth["ClientId"] ?? "";
-                opt.ClientSecret = googleAuth["ClientSecret"] ?? "";
-                opt.SignInScheme = IdentityConstants.ExternalScheme;
-            });
+            //builder.Services.AddAuthentication()
+            //.AddGoogle("google", opt =>
+            //{
+            //    var googleAuth = builder.Configuration.GetSection("Authentication:Google");
+            //    opt.ClientId = googleAuth["ClientId"] ?? "";
+            //    opt.ClientSecret = googleAuth["ClientSecret"] ?? "";
+            //    opt.SignInScheme = IdentityConstants.ExternalScheme;
+            //});
 
             // ================= External Login (Google) =================
             builder.Services.AddAuthentication()
