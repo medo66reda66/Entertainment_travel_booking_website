@@ -150,39 +150,35 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
         }
 
 
+        [HttpPost] // تأكد أنها HttpPost لأن الفورم تبعث بالـ Post
         [ValidateAntiForgeryToken]
         public IActionResult BookNow(int tripId, int quantity, List<int>? SelectedActivityIds)
         {
             var trip = _Context.trips.FirstOrDefault(t => t.Id == tripId);
             if (trip == null) return NotFound();
 
-            SelectedActivityIds ??= new List<int>();
-
-            // حساب سعر الرحلة بعد الخصم
+            // 1. حساب سعر الرحلة الأساسي (بعد الخصم إن وجد)
             decimal finalPrice = trip.Price;
             if (trip.DiscountedPrice != null && trip.DiscountedPrice > 0)
             {
                 finalPrice -= (trip.Price * trip.DiscountedPrice.Value / 100);
             }
 
-            // ===== حساب سعر الأنشطة الإضافية =====
+            // 2. حساب سعر الأنشطة المختارة
             decimal activitiesTotal = 0;
             if (SelectedActivityIds != null && SelectedActivityIds.Count > 0)
             {
-                activitiesTotal = _Context.tripAdditianActivities
-                    .Where(x => SelectedActivityIds.Contains(x.additianActivitiesId))
-                    .Select(x => x.additianActivities.Price)
-                    .Sum();
+                activitiesTotal = _Context.additianActivites // تأكد من اسم الجدول
+                    .Where(x => SelectedActivityIds.Contains(x.Id))
+                    .Sum(x => x.Price);
             }
 
-            // السعر النهائي للفرد الواحد = سعر الرحلة + سعر الأنشطة
-            decimal finalUnitPrice = finalPrice + activitiesTotal;
+            // 3. إجمالي المبلغ المطلوب
+            decimal totalPrice = (finalPrice + activitiesTotal) * quantity;
 
-            // السعر النهائي الإجمالي = السعر للفرد × الكمية
-            decimal totalPrice = finalUnitPrice * quantity;
-
-            // إنشاء Order مع OrderItems (للتوافق مع PaymentController)
-            var order = new Order
+            // 4. التوجيه إلى PaymentController (نمرر البيانات في الـ Query String)
+            // نستخدم RedirectToAction للانتقال من HomeController إلى PaymentController
+            return RedirectToAction("Checkout", "Payment", new
             {
                 Quantity = quantity,
                 TotalPrice = totalPrice,
@@ -240,25 +236,41 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
   //      }
         // ------------------- صفحة Cart -------------------
 
-        //[Authorize]
-        //public IActionResult MyTrips()
-        //{
-        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        //    var orders = oreder.GetAll(o => o.UserId == userId, includeProperties: "Trip,Trip.Hotel");
+//          _cartRepo.AddToCart(userId, TripId, SelectedActivityIds, totalPrice, Quantity);
 
-        //    var tripsList = orders.Select(o => new MyTripsVM
-        //    {
-        //        OrderId = o.Id,
-        //        TripName = o.Trip.Place,
-        //        HotelName = o.Trip.Hotel != null ? o.Trip.Hotel.Name : "",
-        //        Price = o.TotalPrice,
-        //        Quantity = o.Quantity,
-        //        BookingDate = o.OrderDate
-        //    }).ToList();
 
-        //    return View(tripsList);
-        //}
+//          return RedirectToAction(nameof(Cart));
+//      }
+//          };
+
+//          _Context.Orders.Add(order);
+//          _Context.SaveChanges();
+
+//          return RedirectToAction("Index");
+//      }
+// ------------------- صفحة Cart -------------------
+
+//[Authorize]
+//public IActionResult MyTrips()
+//{
+//    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+//    var orders = oreder.GetAll(o => o.UserId == userId, includeProperties: "Trip,Trip.Hotel");
+
+//    var tripsList = orders.Select(o => new MyTripsVM
+//    {
+//        OrderId = o.Id,
+//        TripName = o.Trip.Place,
+//        HotelName = o.Trip.Hotel != null ? o.Trip.Hotel.Name : "",
+//        Price = o.TotalPrice,
+//        Quantity = o.Quantity,
+//        BookingDate = o.OrderDate
+//    }).ToList();
+
+//    return View(tripsList);
+//}
+
 
     
 
