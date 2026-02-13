@@ -1,0 +1,341 @@
+﻿@model Entertainment_travel_booking_website.Models.ViewModels.TripDetailVM
+@{
+    ViewData["Title"] = Model.Trip.Place;
+    Layout = "_Layout";
+}
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+<main class="w-[90%] max-w-7xl mx-auto px-4 py-12 lg:py-20 font-['Cairo'] antialiased">
+
+    <!-- ==================== HEADER ==================== -->
+    <header class="text-center mb-16 animate-fade-in">
+
+        @if (Model.Trip.Status)
+        {
+            <span class="bg-green-100 text-green-600 px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                متاحة الآن
+            </span>
+        }
+
+        @if (Model.Trip.DiscountedPrice != null && Model.Trip.DiscountedPrice > 0)
+        {
+            <div class="mt-3">
+                <span class="bg-red-100 text-red-600 px-4 py-1 rounded-full text-xs font-black">
+                    خصم @Model.Trip.DiscountedPrice%
+                </span>
+            </div>
+        }
+
+        <h1 class="text-5xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight">
+            @Model.Trip.Place
+        </h1>
+
+        <div class="flex items-center justify-center gap-4 text-gray-500">
+            <span class="flex items-center gap-1 font-bold">
+                <i class="fas fa-hotel text-blue-500"></i> @Model.Hotel?.Name
+            </span>
+            <span class="text-gray-300">|</span>
+            <span class="font-medium">أفضل تجربة ترفيهية في @Model.Trip.Place</span>
+        </div>
+
+        <div class="mt-6">
+            @if (Model.Trip.DiscountedPrice != null && Model.Trip.DiscountedPrice > 0)
+            {
+                <span class="text-gray-400 line-through text-xl mr-2">
+                    $@Model.Trip.Price
+                </span>
+                <span class="text-3xl font-black text-red-600">
+                    $@Model.TotalPrice
+                </span>
+            }
+            else
+            {
+                <span class="text-3xl font-black text-blue-600">
+                    $@Model.Trip.Price
+                </span>
+            }
+        </div>
+    </header>
+
+    <!-- ==================== MAIN GRID ==================== -->
+    <div class="grid lg:grid-cols-3 gap-12">
+
+        <!-- ==================== صور الرحلة ==================== -->
+        <div class="lg:col-span-2 space-y-12">
+            <section>
+                <h2 class="text-2xl font-black text-gray-800 mb-6 flex items-center gap-3">
+                    <span class="w-2 h-8 bg-blue-600 rounded-full"></span>
+                    معرض صور الرحلة
+                </h2>
+
+                <div>
+                    <img id="mainTripImage"
+                         src="@Url.Content(Model.Trip.Image != null ? "~/images/trips/" + Model.Trip.Image : "~/images/placeholder/trip-placeholder.jpg")"
+                         class="w-full h-[450px] object-cover rounded-[2.5rem] shadow-2xl" />
+                </div>
+
+                @if (Model.Trip.TripSupimages != null && Model.Trip.TripSupimages.Any())
+                {
+                    <div class="thumbs-wrapper mt-6">
+                        <img src="@Url.Content("~/images/trips/" + Model.Trip.Image)"
+                             class="thumb active trip-thumb"
+                             data-full="@Url.Content("~/images/trips/" + Model.Trip.Image)" />
+
+                        @foreach (var img in Model.Trip.TripSupimages)
+                        {
+                            <img src="@Url.Content("~/images/trip-sup/" + img.SupImg)"
+                                 class="thumb trip-thumb"
+                                 data-full="@Url.Content("~/images/trip-sup/" + img.SupImg)" />
+                        }
+                    </div>
+                }
+            </section>
+
+            <!-- ==================== قسم الفندق ==================== -->
+            @if (Model.Hotel != null)
+            {
+                <section class="bg-gray-50 rounded-[3rem] p-8 border border-gray-100">
+
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                        <div>
+                            <h2 class="text-3xl font-black text-gray-900">
+                                إقامتك في @Model.Hotel.Name
+                            </h2>
+                            <p class="text-gray-500 font-bold mt-1">
+                                استمتع بأرقى الخدمات الفندقية
+                            </p>
+                        </div>
+
+                        <a href="@Url.Action("HotelDetail", "Home", new { area = "Customer", id = Model.Hotel.Id })"
+                           class="px-8 py-4 bg-white text-blue-600 font-black rounded-2xl hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100 active:scale-95">
+                            تفاصيل الفندق الكاملة
+                        </a>
+                    </div>
+
+                    <div class="relative">
+                        <img id="mainHotelImage"
+                             src="@Url.Content(Model.Hotel.Image != null ? "~/images/hotels/" + Model.Hotel.Image : "~/images/placeholder/hotel-placeholder.jpg")"
+                             class="w-full h-[350px] object-cover rounded-[2rem] shadow-lg" />
+
+                        @if (Model.Hotel.HotelSupImgs != null && Model.Hotel.HotelSupImgs.Any())
+                        {
+                            <div class="thumbs-wrapper mt-4">
+                                <img src="@Url.Content("~/images/hotels/" + Model.Hotel.Image)"
+                                     class="thumb hotel-thumb"
+                                     data-full="@Url.Content("~/images/hotels/" + Model.Hotel.Image)" />
+
+                                @foreach (var img in Model.Hotel.HotelSupImgs)
+                                {
+                                    <img src="@Url.Content("~/images/hotel-sup/" + img.SupImg)"
+                                         class="thumb hotel-thumb"
+                                         data-full="@Url.Content("~/images/hotel-sup/" + img.SupImg)" />
+                                }
+                            </div>
+                        }
+                    </div>
+
+                </section>
+            }
+        </div>
+
+        <!-- ==================== تخصيص الرحلة ==================== -->
+        <div class="lg:col-span-1">
+            <div class="sticky top-8 space-y-6">
+                <section class="bg-white rounded-[2.5rem] shadow-2xl p-8 border border-blue-50">
+
+                    <h3 class="text-xl font-black text-gray-900 mb-6">
+                        تخصيص رحلتك
+                    </h3>
+
+                    <form action="/Customer/Payment/Checkout" method="get">
+                        <input type="hidden" name="tripId" value="@Model.Trip.Id" />
+
+                        <!-- الأنشطة -->
+                        <div class="space-y-3 mb-6">
+                            @foreach (var act in Model.AdditionalActivities)
+                            {
+                                <div class="activity-card flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <input type="checkbox"
+                                               name="SelectedActivityIds"
+                                               value="@act.Id"
+                                               class="activity-checkbox"
+                                               data-price="@act.Price" />
+                                        <span class="font-bold">@act.Place</span>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <span class="font-black text-blue-600">$@act.Price</span>
+                                        <a href="/Customer/Home/ActivityDetail/@act.Id"
+                                           class="text-sm bg-blue-50 text-blue-600 px-3 py-1 rounded-xl font-bold hover:bg-blue-600 hover:text-white transition">
+                                            التفاصيل
+                                        </a>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+
+                        <!-- العدد -->
+                        <div class="mb-6 p-4 bg-gray-50 rounded-2xl border text-center">
+                            <label class="block text-sm font-black text-gray-700 mb-4">عدد الأفراد</label>
+                            <div class="flex items-center justify-center gap-6">
+                                <button type="button"
+                                        onclick="changeCount(-1)"
+                                        class="w-12 h-12 bg-white border-2 border-blue-600 text-blue-600 rounded-xl text-2xl">
+                                    -
+                                </button>
+
+                                <input type="number"
+                                       name="Quantity"
+                                       id="tripQuantity"
+                                       value="1"
+                                       min="1"
+                                       class="w-16 text-center text-2xl font-black bg-transparent border-none"
+                                       readonly />
+
+                                <button type="button"
+                                        onclick="changeCount(1)"
+                                        class="w-12 h-12 bg-white border-2 border-blue-600 text-blue-600 rounded-xl text-2xl">
+                                    +
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- السعر النهائي -->
+                        <div class="mb-6 p-4 bg-gray-50 rounded-2xl border text-center">
+                            <p class="text-gray-700 font-bold mb-2">السعر النهائي:</p>
+                            <h3 class="text-3xl font-black text-blue-600">
+                                $<span id="totalPrice">@Model.TotalPrice</span>
+                            </h3>
+                        </div>
+
+                        <!-- hidden input للسعر النهائي -->
+                        <input type="hidden" name="ClientTotalPrice" id="clientTotalPrice" />
+
+                        <button type="submit"
+                                class="w-full py-4 rounded-2xl font-bold text-white
+                                       bg-gradient-to-r from-green-600 via-green-500 to-green-700
+                                       hover:from-green-700 hover:via-green-600 hover:to-green-800
+                                       shadow-lg hover:shadow-2xl transition-all duration-300">
+                            Book Now
+                        </button>
+                    </form>
+
+                </section>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<!-- ==================== SCRIPT ==================== -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+        function updateTotal() {
+            const basePrice = parseFloat("@Model.TotalPrice");
+            const quantity = parseInt(document.getElementById('tripQuantity').value);
+            const checkboxes = document.querySelectorAll('.activity-checkbox');
+            const totalEl = document.getElementById('totalPrice');
+
+            let extra = 0;
+            checkboxes.forEach(x => {
+                if (x.checked)
+                    extra += parseFloat(x.dataset.price || 0);
+            });
+
+            const finalTotal = (basePrice + extra) * quantity;
+            totalEl.textContent = finalTotal.toFixed(2);
+
+            // Hidden input للسعر النهائي
+            document.getElementById('clientTotalPrice').value = finalTotal.toFixed(2);
+        }
+
+        document.querySelectorAll('.activity-checkbox').forEach(cb => {
+            cb.addEventListener('change', updateTotal);
+        });
+
+        window.changeCount = function(amount) {
+            const input = document.getElementById('tripQuantity');
+            let currentValue = parseInt(input.value);
+            let newValue = currentValue + amount;
+            if (newValue >= 1) {
+                input.value = newValue;
+                updateTotal();
+            }
+        }
+
+        // تغيير الصورة الرئيسية عند الضغط على أي صورة مصغرة
+        const tripThumbs = document.querySelectorAll('.trip-thumb');
+        const mainTripImage = document.getElementById('mainTripImage');
+        tripThumbs.forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                mainTripImage.src = thumb.dataset.full;
+                tripThumbs.forEach(t => t.classList.remove('active'));
+                thumb.classList.add('active');
+            });
+        });
+
+        if (document.querySelectorAll('.hotel-thumb').length > 0) {
+            const hotelThumbs = document.querySelectorAll('.hotel-thumb');
+            const mainHotelImage = document.getElementById('mainHotelImage');
+            hotelThumbs.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    mainHotelImage.src = thumb.dataset.full;
+                    hotelThumbs.forEach(t => t.classList.remove('active'));
+                    thumb.classList.add('active');
+                });
+            });
+        }
+
+    });
+</script>
+
+<!-- ==================== STYLE ==================== -->
+<style>
+    body {
+        background-color: #fcfcfd;
+    }
+
+    .thumbs-wrapper {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        padding: 10px 2px;
+        scrollbar-width: none;
+    }
+
+    .thumb {
+        width: 100px;
+        height: 70px;
+        flex-shrink: 0;
+        object-fit: cover;
+        border-radius: 16px;
+        cursor: pointer;
+        border: 3px solid transparent;
+    }
+
+    .activity-card {
+        padding: 1rem 1.25rem;
+        border: 2px solid #f8fafc;
+        border-radius: 20px;
+        background: #f8fafc;
+        transition: all 0.3s ease;
+    }
+
+        .activity-card:has(input:checked) {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+
+    .activity-checkbox {
+        width: 22px;
+        height: 22px;
+        accent-color: #2563eb;
+    }
+
+    #totalPrice {
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+</style>

@@ -11,6 +11,7 @@ namespace Entertainment_travel_booking_website.Models
 
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public decimal TotalPrice { get; set; }
+        public int Quantity { get; set; }
 
         [Required]
         public string CardName { get; set; }

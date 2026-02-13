@@ -1,0 +1,77 @@
+﻿@using Entertainment_travel_booking_website.Models
+@model IEnumerable<Trip>
+
+@* --- 1. جزء عرض كروت الرحلات --- *@
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var trip in Model)
+        {
+            <div class="bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-50 group flex flex-col">
+                <div class="relative h-56 overflow-hidden">
+                    <img src="~/images/trips/@trip.Image"
+                         class="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                         onerror="this.src='https://images.unsplash.com/photo-1506461883276-594a12b11cf3?auto=format&fit=crop&w=600'">
+                    @if (trip.Status)
+                    {
+                        <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest">
+                            متاح
+                        </div>
+                    }
+                </div>
+
+                <div class="p-6 text-right flex flex-col flex-grow">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-gray-400 text-[10px] font-bold italic">📍 @trip.Place</span>
+                        <span class="text-gray-400 text-[10px] font-bold italic">🏨 @trip.Hotel?.Name</span>
+                    </div>
+
+                    <h3 class="text-lg font-black text-gray-900 mb-2 group-hover:text-blue-600 transition line-clamp-1">
+                        رحلة @trip.Place
+                    </h3>
+                    <p class="text-gray-500 text-xs leading-relaxed mb-4 line-clamp-2">@trip.Description</p>
+
+                    <div class="mt-auto border-t border-gray-50 pt-4 flex justify-between items-center">
+                        <div>
+                            <p class="text-[9px] text-gray-400 font-black uppercase">السعر</p>
+                            <p class="text-lg font-black text-gray-900">
+                                @trip.Price.ToString("N0") <span class="text-[10px] font-bold">EGP</span>
+                            </p>
+                        </div>
+                        <a href="/Customer/Home/Detail/@trip.Id"
+                           class="bg-blue-600 text-white px-4 py-2 rounded-xl cursor-pointer text-sm font-black hover:bg-gray-900 transition shadow-md active:scale-95 text-center">
+                            تفاصيل
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-center text-gray-500 col-span-full mt-10 font-bold">
+            لا توجد رحلات متاحة حالياً
+        </p>
+    }
+</div>
+
+@* --- 2. جزء أزرار الترقيم (Pagination) - وضعه هنا يجعله يتحدث مع كل AJAX request --- *@
+@if (ViewBag.TotalPages > 1)
+{
+    <div class="flex justify-center items-center gap-2 mt-16">
+        @for (int i = 1; i <= ViewBag.TotalPages; i++)
+        {
+            @* هنا السحر: بنقارن الرقم الحالي بالرقم اللي جاي من الـ Controller *@
+            var isActive = (ViewBag.CurrentPage == i);
+
+            <button type="button"
+                    onclick="loadPage(@i)"
+                    class="w-10 h-10 flex items-center justify-center rounded-xl font-black transition-all shadow-sm
+                    @(isActive
+                        ? "bg-blue-600 text-white scale-110 shadow-lg shadow-blue-200 pointer-events-none"
+                        : "bg-white text-gray-400 hover:bg-gray-50 border border-gray-100 cursor-pointer")">
+                @i
+            </button>
+        }
+    </div>
+}
