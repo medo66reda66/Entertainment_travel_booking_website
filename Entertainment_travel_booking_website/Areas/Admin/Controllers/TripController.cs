@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using System.Linq.Expressions;
+using Travel_booking_website;
 
 namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 {
@@ -16,7 +17,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
         private readonly IRepository<Trip> _tripRepository;
         private readonly IRepository<TripSupimage> _tripSupimageRepository;
         private readonly TripSupimgIRepository _tripSupimgIRepository;
-        private readonly IStringLocalizer<TripController> _localizer;
+        private readonly IStringLocalizer<Trip1Controller> _localizer;
 
         // ====== ADD ONLY ======
         private readonly IRepository<Hotel> _hotelRepository;
@@ -32,7 +33,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
             IRepository<Hotel> hotelRepository,
             IRepository<AdditianActivities> activitiesRepository
 ,
-            IStringLocalizer<TripController> localizer
+            IStringLocalizer<Trip1Controller> localizer
         // ======================
         )
         {
@@ -296,7 +297,9 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
             _tripRepository.Update(trip);
             await _tripRepository.CommitAsync(cancellationToken);
-            TempData["sucess-Notification"] = _localizer["EditTrip"].Value;
+
+            var successMessage = _localizer["EditTrip"].Value;
+            TempData["sucess-Notification"] = successMessage;
 
             return RedirectToAction("Index");
         }

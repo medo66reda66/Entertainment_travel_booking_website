@@ -180,12 +180,22 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
             // نستخدم RedirectToAction للانتقال من HomeController إلى PaymentController
             return RedirectToAction("Checkout", "Payment", new
             {
-                area = "Customer",
-                tripId = tripId,
-                quantity = quantity,
-                totalPrice = totalPrice,
-                selectedActivityIds = SelectedActivityIds // الـ Routing سيتعامل مع الـ List بشكل تلقائي
-            });
+                Quantity = quantity,
+                TotalPrice = totalPrice,
+                OrderDate = DateTime.Now,
+                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+                OrderItems = new List<OrderItem>
+                {
+                    new OrderItem
+                    {
+                        TripId = trip.Id,
+                        TripName = trip.Place,
+                        Price = finalUnitPrice, // سعر الفرد الواحد شامل الأنشطة
+                        Quantity = quantity
+                    }
+                }
+            };
+            return Ok();
         }
     }
 }
@@ -198,18 +208,33 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
   //      {
   //          var userId = User.Identity?.Name ?? "guest";
 
-//          // التأكد من وجود الرحلة
-//          var trip = _Context.trips.FirstOrDefault(t => t.Id == TripId);
-//          if (trip == null) return NotFound();
+  //          // التأكد من وجود الرحلة
+  //          var trip = _Context.trips.FirstOrDefault(t => t.Id == TripId);
+  //          if (trip == null) return NotFound();
 
+          
+  //          SelectedActivityIds ??= new List<int>();
+  //var activities = _Context.additianActivites
+  //              .Where(a => SelectedActivityIds.Contains(a.Id))
+  //              .ToList();
 
-//          SelectedActivityIds ??= new List<int>();
-//var activities = _Context.additianActivites
-//              .Where(a => SelectedActivityIds.Contains(a.Id))
-//              .ToList();
+       
+  //          decimal totalPrice = (trip.Price + activities.Sum(a => a.Price)) * Quantity;
 
+           
+  //          _cartRepo.AddToCart(userId, TripId, SelectedActivityIds, totalPrice, Quantity);
 
-//          decimal totalPrice = (trip.Price + activities.Sum(a => a.Price)) * Quantity;
+   
+  //          return RedirectToAction(nameof(Cart));
+  //      }
+  //          };
+
+  //          _Context.Orders.Add(order);
+  //          _Context.SaveChanges();
+
+  //          return RedirectToAction("Index");
+  //      }
+        // ------------------- صفحة Cart -------------------
 
 
 //          _cartRepo.AddToCart(userId, TripId, SelectedActivityIds, totalPrice, Quantity);
@@ -246,4 +271,6 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
 //    return View(tripsList);
 //}
 
+
+    
 

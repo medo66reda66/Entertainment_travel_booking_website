@@ -5,7 +5,9 @@ using Entertainment_travel_booking_website.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 using System.Linq.Expressions;
+using Travel_booking_website;
 
 namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 {
@@ -15,11 +17,13 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
     {
         private readonly IRepository<Room> _roomRepo;
         private readonly IRepository<Hotel> _hotelRepo;
+        private readonly IStringLocalizer<Room1Controller> _stringLocalizer;
 
-        public RoomController(IRepository<Room> roomRepo, IRepository<Hotel> hotelRepo)
+        public RoomController(IRepository<Room> roomRepo, IRepository<Hotel> hotelRepo, IStringLocalizer<Room1Controller> stringLocalizer)
         {
             _roomRepo = roomRepo;
             _hotelRepo = hotelRepo;
+            _stringLocalizer = stringLocalizer;
         }
 
         // ----------------- Index -----------------
@@ -70,7 +74,10 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
             await _roomRepo.AddAsync(room, cancellationToken);
             await _roomRepo.CommitAsync(cancellationToken);
-            TempData["sucess-Notification"] = "Room Create Successfully";
+
+            var massage = _stringLocalizer["AddRoom"].Value;
+            TempData["sucess-Notification"] = massage;
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -111,7 +118,9 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
             _roomRepo.Update(room);
             await _roomRepo.CommitAsync(cancellationToken);
-            TempData["sucess-Notification"] = "Room Edit Successfully";
+
+            var massage = _stringLocalizer["EditRoom"].Value;
+            TempData["sucess-Notification"] = massage;
 
             return RedirectToAction(nameof(Index));
         }
@@ -127,7 +136,9 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
 
             _roomRepo.Delete(room);
             await _roomRepo.CommitAsync();
-            TempData["sucess-Notification"] = "Room Delete Successfully";
+
+            var massage = _stringLocalizer["DeleteRoom"].Value;
+            TempData["sucess-Notification"] = massage;
             return RedirectToAction(nameof(Index));
 
         }

@@ -13,15 +13,15 @@ namespace Entertainment_travel_booking_website.Models
         public decimal TotalPrice { get; set; }
         public int Quantity { get; set; }
 
-        [Required]
-        public string CardName { get; set; }
-        [Required]
-        public string CardNumber { get; set; }
-        [Required]
-        public string ExpiryDate { get; set; }
-        [Required]
-        public string CVV { get; set; }
+        
+        public string? CardName { get; set; }
+       
+        public string? CardNumber { get; set; }
+      
+        public DateTime? ExpiryDate { get; set; }
+        
+        public string? CVV { get; set; }
 
-        public List<OrderItem> OrderItems { get; set; }
+        public List<OrderItem>? OrderItems { get; set; }
     }
 }

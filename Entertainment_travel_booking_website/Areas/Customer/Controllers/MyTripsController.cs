@@ -19,12 +19,22 @@ public class MyTripsController : Controller
         _userManager = userManager;
     }
 
+    public IActionResult success()
+    {
+
+        return View();
+    }
+    public IActionResult cancel()
+    {
+        return View();
+    }
     public async Task<IActionResult> Index()
     {
         var user = await _userManager.GetUserAsync(User);
 
         var orders = await _context.Orders
             .Include(o => o.OrderItems)
+            .ThenInclude(i => i.Trip.Hotel)
             .Where(o => o.UserId == user.Id)
             .ToListAsync();
 
