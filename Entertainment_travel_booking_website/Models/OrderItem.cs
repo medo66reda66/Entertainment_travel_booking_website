@@ -5,6 +5,7 @@
         public int Id { get; set; }
 
         public int TripId { get; set; }
+        public Trip? Trip { get; set; }
         public string TripName { get; set; }
         public decimal Price { get; set; }
         public int Quantity { get; set; }

@@ -1,0 +1,42 @@
+﻿@model IEnumerable<Entertainment_travel_booking_website.Models.Order>
+@{
+    Layout = "_Layout";
+}
+
+<div class="space-y-6 p-4">
+    @foreach (var order in Model)
+    {
+        <div class="p-6 bg-gray-100 rounded-2xl shadow-md">
+            <div class="flex justify-between items-center mb-2">
+                <p class="font-bold text-lg">Order Date: @order.OrderDate.ToString("dd/MM/yyyy")</p>
+                <p class="font-semibold text-blue-600">Expiry: @order.ExpiryDate?.ToString("dd/MM/yyyy")</p>
+            </div>
+
+            <p class="font-semibold">Total Price: @order.TotalPrice EGP</p>
+            <p class="font-medium">Quantity: @order.Quantity</p>
+            <p class="font-medium">Card Number: @order.CardNumber</p>
+
+            <div class="mt-4 space-y-2">
+                <h3 class="font-bold text-gray-700 mb-2">Order Items:</h3>
+                @foreach (var item in order.OrderItems)
+                {
+                    <div class="p-3 bg-white rounded-lg shadow-sm border border-gray-200">
+                        <p class="font-bold text-gray-800">@item.TripName</p>
+                        <p class="text-gray-700">Price: @item.Price EGP</p>
+                        <p class="text-gray-700">Quantity: @item.Quantity</p>
+                        <p class="text-gray-700">Activities: @item.Trip.TripAdditianActivities</p>
+                        <p class="text-gray-700">StartDate: @item.Trip.StartDate</p>
+                        <p class="text-gray-700">EndDate: @item.Trip.EndDate</p>
+                        <p class="text-gray-700">ImageTrip: @item.Trip.Image</p>
+                        <p class="text-gray-700">Description for trip: @item.Trip.Description</p>
+                        <p class="text-gray-700">DiscountedPrice: @item.Trip.DiscountedPrice</p>
+                        <p class="text-gray-700">Hotel Name: @item.Trip.Hotel.Name</p>
+                        <p class="text-gray-700">Hotel Location: @item.Trip.Hotel.Location</p>
+                        <p class="text-gray-700">Image for Hotel : @item.Trip.Hotel.Image</p>
+                        
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

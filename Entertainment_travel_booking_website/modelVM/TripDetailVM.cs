@@ -11,7 +11,7 @@ namespace Entertainment_travel_booking_website.Models.ViewModels
         public List<AdditianActivities> AdditionalActivities { get; set; } = new List<AdditianActivities>();
 
         public List<int> SelectedActivityIds { get; set; } = new List<int>(); // لتخزين الأنشطة المختارة
-        public decimal Price { get; set; } // السعر النهائي بعد إضافة الأنشطة
+        public decimal TotalPrice { get; set; } // السعر النهائي بعد إضافة الأنشطة
     
         public int Count { get; set; }
     
