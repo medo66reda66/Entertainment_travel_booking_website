@@ -98,7 +98,7 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
                     LineItems = new List<SessionLineItemOptions>(),
                     Mode = "payment",
                     SuccessUrl = $"{Request.Scheme}://{Request.Host}/customer/MyTrips/success",
-                    CancelUrl = $"{Request.Scheme}://{Request.Host}/customer/MyTrips/cancel",
+                    CancelUrl = $"{Request.Scheme}://{Request.Host}/customer/MyTrips/cancel/{trip.Id}",
                 };
 
                 options.LineItems.Add(new SessionLineItemOptions

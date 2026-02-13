@@ -8,7 +8,7 @@ using Ecommerce.Utilities;
 namespace Travel_booking_website.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE},{DS.ADMIN_ROLE},{DS.EMPLOYEE_ROLE}")]
+    [Authorize(Roles = $"{DS.SUPER_ADMIN_ROLE}")]
     // تأكد أن الأدمن فقط هو من يدخل
     public class UserController : Controller
     {

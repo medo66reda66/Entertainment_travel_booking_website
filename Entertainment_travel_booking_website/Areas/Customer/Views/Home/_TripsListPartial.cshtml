@@ -56,12 +56,12 @@
 </div>
 
 @* --- 2. جزء أزرار الترقيم (Pagination) - وضعه هنا يجعله يتحدث مع كل AJAX request --- *@
-@if (ViewBag.TotalPages > 1)
+@* @if (ViewBag.TotalPages > 1)
 {
     <div class="flex justify-center items-center gap-2 mt-16">
         @for (int i = 1; i <= ViewBag.TotalPages; i++)
         {
-            @* هنا السحر: بنقارن الرقم الحالي بالرقم اللي جاي من الـ Controller *@
+          
             var isActive = (ViewBag.CurrentPage == i);
 
             <button type="button"
@@ -74,4 +74,4 @@
             </button>
         }
     </div>
-}
+} *@

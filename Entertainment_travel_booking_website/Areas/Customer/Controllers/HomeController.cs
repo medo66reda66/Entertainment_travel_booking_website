@@ -12,8 +12,6 @@ using System.Security.Claims;
 namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
 {
     [Area("Customer")]
-    [Authorize]
-
     public class HomeController : Controller
     {
         private readonly ApplicationDbContext _Context;
@@ -148,57 +146,59 @@ namespace Entertainment_travel_booking_website.Areas.Customer.Controllers
 
             return View(vm);
         }
-
-
-        [HttpPost] // تأكد أنها HttpPost لأن الفورم تبعث بالـ Post
-        [ValidateAntiForgeryToken]
-        public IActionResult BookNow(int tripId, int quantity, List<int>? SelectedActivityIds)
-        {
-            var trip = _Context.trips.FirstOrDefault(t => t.Id == tripId);
-            if (trip == null) return NotFound();
-
-            // 1. حساب سعر الرحلة الأساسي (بعد الخصم إن وجد)
-            decimal finalPrice = trip.Price;
-            if (trip.DiscountedPrice != null && trip.DiscountedPrice > 0)
-            {
-                finalPrice -= (trip.Price * trip.DiscountedPrice.Value / 100);
-            }
-
-            // 2. حساب سعر الأنشطة المختارة
-            decimal activitiesTotal = 0;
-            if (SelectedActivityIds != null && SelectedActivityIds.Count > 0)
-            {
-                activitiesTotal = _Context.additianActivites // تأكد من اسم الجدول
-                    .Where(x => SelectedActivityIds.Contains(x.Id))
-                    .Sum(x => x.Price);
-            }
-
-            // 3. إجمالي المبلغ المطلوب
-            decimal totalPrice = (finalPrice + activitiesTotal) * quantity;
-
-            // 4. التوجيه إلى PaymentController (نمرر البيانات في الـ Query String)
-            // نستخدم RedirectToAction للانتقال من HomeController إلى PaymentController
-            return RedirectToAction("Checkout", "Payment", new
-            {
-                Quantity = quantity,
-                TotalPrice = totalPrice,
-                OrderDate = DateTime.Now,
-                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
-                OrderItems = new List<OrderItem>
-                {
-                    new OrderItem
-                    {
-                        TripId = trip.Id,
-                        TripName = trip.Place,
-                        Price = finalUnitPrice, // سعر الفرد الواحد شامل الأنشطة
-                        Quantity = quantity
-                    }
-                }
-            };
-            return Ok();
-        }
     }
 }
+
+
+//        [HttpPost] // تأكد أنها HttpPost لأن الفورم تبعث بالـ Post
+//        [ValidateAntiForgeryToken]
+//        public IActionResult BookNow(int tripId, int quantity, List<int>? SelectedActivityIds)
+//        {
+//            var trip = _Context.trips.FirstOrDefault(t => t.Id == tripId);
+//            if (trip == null) return NotFound();
+
+//            // 1. حساب سعر الرحلة الأساسي (بعد الخصم إن وجد)
+//            decimal finalPrice = trip.Price;
+//            if (trip.DiscountedPrice != null && trip.DiscountedPrice > 0)
+//            {
+//                finalPrice -= (trip.Price * trip.DiscountedPrice.Value / 100);
+//            }
+
+//            // 2. حساب سعر الأنشطة المختارة
+//            decimal activitiesTotal = 0;
+//            if (SelectedActivityIds != null && SelectedActivityIds.Count > 0)
+//            {
+//                activitiesTotal = _Context.additianActivites // تأكد من اسم الجدول
+//                    .Where(x => SelectedActivityIds.Contains(x.Id))
+//                    .Sum(x => x.Price);
+//            }
+
+//            // 3. إجمالي المبلغ المطلوب
+//            decimal totalPrice = (finalPrice + activitiesTotal) * quantity;
+
+//            // 4. التوجيه إلى PaymentController (نمرر البيانات في الـ Query String)
+//            // نستخدم RedirectToAction للانتقال من HomeController إلى PaymentController
+//            return RedirectToAction("Checkout", "Payment", new
+//            {
+//                Quantity = quantity,
+//                TotalPrice = totalPrice,
+//                OrderDate = DateTime.Now,
+//                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+//                OrderItems = new List<OrderItem>
+//                {
+//                    new OrderItem
+//                    {
+//                        TripId = trip.Id,
+//                        TripName = trip.Place,
+//                        Price = finalUnitPrice, // سعر الفرد الواحد شامل الأنشطة
+//                        Quantity = quantity
+//                    }
+//                }
+//            };
+//            return Ok();
+//        }
+//    }
+//}
 
 
 

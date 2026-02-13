@@ -1,42 +1,122 @@
-﻿@model IEnumerable<Entertainment_travel_booking_website.Models.Order>
+﻿@using Entertainment_travel_booking_website.Models
+@model IEnumerable<Order>
 @{
-    Layout = "_Layout";
+    Layout = "_Layout"; // السطر ده هو اللي بيسحب الـ CSS بتاع الموقع كله
+    ViewData["Title"] = "رحلاتي الاستكشافية";
 }
 
-<div class="space-y-6 p-4">
-    @foreach (var order in Model)
-    {
-        <div class="p-6 bg-gray-100 rounded-2xl shadow-md">
-            <div class="flex justify-between items-center mb-2">
-                <p class="font-bold text-lg">Order Date: @order.OrderDate.ToString("dd/MM/yyyy")</p>
-                <p class="font-semibold text-blue-600">Expiry: @order.ExpiryDate?.ToString("dd/MM/yyyy")</p>
+<style>
+    @* إضافة خط Cairo للعربي لضمان الفخامة *@
+    @@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+    .travelgo-font {
+        font-family: 'Cairo', sans-serif;
+    }
+</style>
+
+<div class="min-h-screen bg-[#f1f5f9] py-16 px-4 travelgo-font">
+    <div class="max-w-6xl mx-auto">
+
+        <div class="flex flex-col md:flex-row md:items-center justify-between mb-12 gap-6 bg-white p-8 rounded-[2rem] shadow-sm border border-slate-100">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-[900] text-slate-900 tracking-tight">
+                    مغامراتي القادمة <span class="text-blue-600"></span>
+                </h1>
+                <p class="text-slate-500 mt-2 font-medium flex items-center gap-2">
+                    <span class="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
+                    لديك @Model.Count() رحلات مسجلة في ذكرياتك
+                </p>
             </div>
+            <a href="/" class="group bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold hover:bg-blue-600 transition-all duration-300 shadow-lg shadow-slate-200 flex items-center gap-3 w-full md:w-fit justify-center">
+                <span>حجز رحلة جديدة</span>
+                <svg class="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke-width="2.5" stroke-linecap="round" /></svg>
+            </a>
+        </div>
 
-            <p class="font-semibold">Total Price: @order.TotalPrice EGP</p>
-            <p class="font-medium">Quantity: @order.Quantity</p>
-            <p class="font-medium">Card Number: @order.CardNumber</p>
-
-            <div class="mt-4 space-y-2">
-                <h3 class="font-bold text-gray-700 mb-2">Order Items:</h3>
-                @foreach (var item in order.OrderItems)
+        @if (!Model.Any())
+        {
+            <div class="bg-white rounded-[3rem] p-20 text-center shadow-xl border border-slate-50">
+                <div class="text-8xl mb-6">🏝️</div>
+                <h3 class="text-3xl font-[900] text-slate-800 mb-4">العالم ينتظرك!</h3>
+                <p class="text-slate-500 mb-10 text-lg">لم تقم بحجز أي مغامرة بعد.. هل أنت مستعد للبدء؟</p>
+                <a href="/" class="inline-block bg-blue-600 text-white px-10 py-5 rounded-2xl font-bold hover:bg-blue-700 transition shadow-xl shadow-blue-100 transform hover:-translate-y-1">
+                    استكشف الوجهات الآن
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="grid gap-10">
+                @foreach (var order in Model)
                 {
-                    <div class="p-3 bg-white rounded-lg shadow-sm border border-gray-200">
-                        <p class="font-bold text-gray-800">@item.TripName</p>
-                        <p class="text-gray-700">Price: @item.Price EGP</p>
-                        <p class="text-gray-700">Quantity: @item.Quantity</p>
-                        <p class="text-gray-700">Activities: @item.Trip.TripAdditianActivities</p>
-                        <p class="text-gray-700">StartDate: @item.Trip.StartDate</p>
-                        <p class="text-gray-700">EndDate: @item.Trip.EndDate</p>
-                        <p class="text-gray-700">ImageTrip: @item.Trip.Image</p>
-                        <p class="text-gray-700">Description for trip: @item.Trip.Description</p>
-                        <p class="text-gray-700">DiscountedPrice: @item.Trip.DiscountedPrice</p>
-                        <p class="text-gray-700">Hotel Name: @item.Trip.Hotel.Name</p>
-                        <p class="text-gray-700">Hotel Location: @item.Trip.Hotel.Location</p>
-                        <p class="text-gray-700">Image for Hotel : @item.Trip.Hotel.Image</p>
-                        
+                    <div class="group bg-white rounded-[2.5rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-slate-200/60 flex flex-col lg:flex-row h-full">
+
+                        <div class="bg-slate-900 p-10 lg:w-72 flex flex-col justify-between text-white relative">
+                            <div class="relative z-10">
+                                <span class="text-slate-400 text-xs uppercase tracking-[0.2em] font-bold">Booking ID</span>
+                                <p class="text-2xl font-mono font-bold text-emerald-400 mt-1">#@order.Id</p>
+                            </div>
+
+                            <div class="relative z-10 mt-10">
+                                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/20 mb-4">
+                                    <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+                                    Confirmed
+                                </div>
+                                <p class="text-sm text-slate-400">تاريخ الحجز:</p>
+                                <p class="text-base font-bold text-slate-100">@order.OrderDate.ToString("dd MMMM yyyy")</p>
+                            </div>
+                            <div class="absolute -bottom-12 -right-12 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
+                        </div>
+
+                        <div class="p-8 md:p-10 flex-grow flex flex-col justify-center">
+                            @foreach (var item in order.OrderItems)
+                            {
+                                <div class="flex flex-col md:flex-row items-start gap-8 mb-6 last:mb-0 border-b border-slate-50 pb-6 last:border-0">
+                                    <div class="w-full md:w-40 h-40 rounded-[2rem] bg-slate-100 overflow-hidden flex-shrink-0 shadow-sm border-2 border-white">
+                                        <img src="/images/trips/@(item.Trip?.Image ?? "placeholder.jpg")"
+                                             class="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                                             alt="Trip Image">
+                                    </div>
+
+                                    <div class="flex-grow text-right">
+                                        <div class="flex justify-between items-start">
+                                            <h3 class="text-2xl font-[900] text-slate-800 group-hover:text-blue-600 transition duration-300">
+                                                رحلة @(item.Trip?.Place ?? "وجهة سياحية")
+                                            </h3>
+                                            <div class="text-left">
+                                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-tighter">إجمالي المدفوع</p>
+                                                <p class="text-2xl font-black text-blue-600">@order.TotalPrice.ToString("N0") <span class="text-xs">EGP</span></p>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                            <div class="space-y-2">
+                                                <div class="flex items-center gap-2 text-slate-600 font-bold">
+                                                    <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5" stroke-width="2" stroke-linecap="round" /></svg>
+                                                    <span class="text-sm">الفندق: @(item.Trip?.Hotel?.Name ?? "غير محدد")</span>
+                                                </div>
+                                                <div class="flex items-center gap-2 text-slate-600 font-bold">
+                                                    <svg class="w-4 h-4 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-width="2" stroke-linecap="round" /></svg>
+                                                    <span class="text-sm">عدد الأفراد: @item.Quantity</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="bg-blue-50/50 p-3 rounded-2xl border border-blue-100/50">
+                                                <p class="text-[10px] font-black text-blue-600 mb-2 uppercase">الأنشطة المضافة:</p>
+                                                @if (order.OrderItems.Any()) // هنا تقدر تعمل لوب لو عندك جدول للأنشطة المحددة
+                                                {
+                                                    <p class="text-xs text-slate-500 font-bold leading-relaxed italic">
+                                                        تم حجز الأنشطة المختارة بنجاح (راجع البريد للتفاصيل)
+                                                    </p>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     </div>
                 }
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>
