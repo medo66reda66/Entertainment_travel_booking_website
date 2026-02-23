@@ -1,0 +1,76 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Payment Success | TravelGo";
+}
+
+<style>
+    @@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Poppins:wght@400;600;800&display=swap');
+
+    .travelgo-font {
+        font-family: 'Poppins', 'Cairo', sans-serif;
+    }
+</style>
+
+<div class="min-h-screen flex items-center justify-center bg-[#f0f9f4] travelgo-font px-4 py-10">
+    <div class="relative bg-white p-8 md:p-14 rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.05)] text-center max-w-xl w-full border border-white overflow-hidden">
+
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-emerald-50 rounded-full blur-3xl"></div>
+        <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-blue-50 rounded-full blur-3xl"></div>
+
+        <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 via-teal-500 to-blue-600"></div>
+
+        <div class="flex justify-center mb-10">
+            <div class="relative">
+                <div class="absolute inset-0 rounded-full bg-emerald-100 animate-ping opacity-20"></div>
+                <div class="relative w-28 h-28 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 shadow-[0_10px_30px_rgba(16,185,129,0.3)] flex items-center justify-center transform hover:rotate-6 transition duration-500">
+                    <svg class="w-14 h-14 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <h1 class="text-3xl md:text-5xl font-[900] text-slate-900 mb-2 tracking-tight">
+            رحلة سـعيدة! <span class="inline-block animate-bounce"></span>
+        </h1>
+        <p class="text-emerald-600 font-bold text-lg mb-4">استعد لمغامرتك القادمة</p>
+
+        <div class="inline-block px-4 py-1 bg-emerald-50 rounded-full mb-6">
+            <span class="text-sm font-bold text-emerald-700 uppercase tracking-widest">Payment Confirmed</span>
+        </div>
+
+        <div class="space-y-4 mb-12">
+            <p class="text-2xl font-bold text-slate-800 leading-tight">
+                شكراً لثقتك في <span class="text-emerald-600">TravelGo</span>
+            </p>
+            <p class="text-slate-500 text-base md:text-lg font-medium max-w-sm mx-auto">
+                تم تأكيد حجزك بنجاح. جهز حقائبك، مغامرتك القادمة تبدأ الآن!
+            </p>
+        </div>
+
+        <div class="flex flex-col gap-5 mt-10">
+            <a href="/Customer/MyTrips/Index"
+               class="group w-full py-5 bg-slate-900 text-white font-bold rounded-2xl shadow-xl hover:bg-emerald-600 transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center gap-3 cursor-pointer">
+                <span class="text-lg">الذهاب إلى رحلاتي</span>
+                <svg class="w-6 h-6 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+            </a>
+
+            <a 
+                href="/Customer/Home/Index"
+               class="w-full py-4 bg-white text-slate-400 font-bold rounded-2xl border-2 border-slate-100 shadow-sm hover:border-emerald-200 hover:text-emerald-600 hover:bg-emerald-50 transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+                <span>العودة للرئيسية</span>
+            </a>
+
+        </div>
+        <div class="mt-10 pt-8 border-t border-slate-50">
+            <p class="text-slate-400 font-medium">
+                واجهتك مشكلة؟ <a href="#" class="text-emerald-500 hover:text-emerald-600 transition">فريق الدعم في خدمتك</a>
+            </p>
+        </div>
+    </div>
+</div>

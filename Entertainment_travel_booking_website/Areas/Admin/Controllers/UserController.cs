@@ -34,6 +34,12 @@ namespace Travel_booking_website.Areas.Admin.Controllers
             if (user == null)
                 return Json(new { success = false, message = "User not found" });
 
+            if (await _userManager.IsInRoleAsync(user, DS.SUPER_ADMIN_ROLE))
+            {
+                TempData["error-Notification"] = "no super Admin lock";
+                return RedirectToAction(nameof(Index));
+            }
+
             // إذا كان اليوزر معموله بلوك حالياً، نفكه
             if (user.LockoutEnd != null && user.LockoutEnd > DateTime.Now)
             {

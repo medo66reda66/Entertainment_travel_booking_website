@@ -4,6 +4,44 @@
     ViewData["Title"] = "User Management";
 }
 
+@section Scripts {
+    <script>
+        function LockUnlock(userId) {
+            if (confirm("Are you sure you want to change this user's status?")) {
+                fetch('/Admin/User/LockUnlock', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // تأكد من إضافة الـ Antiforgery Token إذا كان مفعلاً
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    },
+                    body: JSON.stringify(userId)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            }
+        }
+    </script>
+
+    @if (TempData["sucess-Notification"] != null)
+    {
+        <script>
+            toastr.success('@TempData["sucess-Notification"]');
+        </script>
+    }
+    else if (TempData["error-Notification"] != null)
+    {
+        <script>
+            toastr.error('@TempData["error-Notification"]');
+        </script>
+    }
+}
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h2 class="fw-bold mb-0 text-dark">User Management</h2>
@@ -76,31 +114,6 @@
     </table>
 </div>
 
-@section Scripts {
-    <script>
-        function LockUnlock(userId) {
-            if (confirm("Are you sure you want to change this user's status?")) {
-                fetch('/Admin/User/LockUnlock', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        // تأكد من إضافة الـ Antiforgery Token إذا كان مفعلاً
-                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
-                    },
-                    body: JSON.stringify(userId)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        location.reload();
-                    } else {
-                        alert(data.message);
-                    }
-                });
-            }
-        }
-    </script>
-}
 
 <style>
     /* نفس الستايلات التي استخدمتها في صفحة الغرف */

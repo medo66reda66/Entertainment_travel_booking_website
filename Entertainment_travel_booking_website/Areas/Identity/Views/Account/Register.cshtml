@@ -5,8 +5,9 @@
     ViewData["Title"] = "إنشاء حساب جديد";
     Layout = "_IdentityLayout";
 }
-
-<div class="bg-white/90 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-white/50 my-10">
+<div class="flex justify-end">
+    <div class="bg-blue-500 text-white p-4 rounded-lg">
+        <div class="bg-white/90 backdrop-blur-xl p-8 md:p-12 rounded-[2.5rem] shadow-2xl border border-white/50 my-10">
     <div class="text-center mb-10">
         <h1 class="text-4xl font-black text-gray-900 mb-3">رحلتك تبدأ هنا!</h1>
         <p class="text-gray-500 font-bold text-sm">انضم إلينا واستكشف أفضل الوجهات السياحية</p>
@@ -17,13 +18,13 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-                <label asp-for="Firstname" class="block text-xs font-black text-blue-600 uppercase mb-2 mr-2">الاسم الأول</label>
-                <input asp-for="Firstname" class="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-gray-700" placeholder="" />
+                <label asp-for="Firstname"  class="block text-xs font-black text-blue-600 uppercase mb-2 mr-2">الاسم الأول</label>
+                        <input asp-for="Firstname" class="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-gray-700" placeholder="Firstname" />
                 <span asp-validation-for="Firstname" class="text-red-500 text-[10px] font-bold mt-1 block mr-2"></span>
             </div>
             <div>
                 <label asp-for="Lastname" class="block text-xs font-black text-blue-600 uppercase mb-2 mr-2">الاسم الأخير</label>
-                <input asp-for="Lastname" class="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-gray-700" placeholder="" />
+                        <input asp-for="Lastname" class="w-full bg-gray-50 border-2 border-gray-100 p-4 rounded-2xl outline-none focus:border-blue-500 focus:bg-white transition-all font-bold text-gray-700" placeholder="Lastname" />
                 <span asp-validation-for="Lastname" class="text-red-500 text-[10px] font-bold mt-1 block mr-2"></span>
             </div>
         </div>
@@ -65,6 +66,24 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
         </button>
     </form>
+    <<form method="post" asp-controller="Account" asp-action="ExternalLogin">
+        <input type="hidden" name="provider" value="google" /> <!-- كله صغير -->
+        <button type="submit"
+                class="w-full bg-white text-gray-800 py-5 rounded-[1.8rem] font-black text-lg shadow-xl shadow-gray-200
+               hover:bg-gray-100 transition-all active:scale-95 flex items-center justify-center gap-3 mt-4 border border-gray-300">
+
+            <!-- Google Logo SVG -->
+            <svg class="w-6 h-6" viewBox="0 0 48 48">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.37 1.22 8.73 3.22l6.48-6.48C35.13 2.54 29.97 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.54 5.86C12.03 13.09 17.55 9.5 24 9.5z" />
+                <path fill="#4285F4" d="M46.5 24c0-1.64-.15-3.22-.43-4.74H24v9h12.7c-.55 2.96-2.23 5.47-4.74 7.18l7.27 5.65C43.94 36.73 46.5 30.89 46.5 24z" />
+                <path fill="#FBBC05" d="M10.1 28.92a14.4 14.4 0 010-9.84l-7.54-5.86A23.99 23.99 0 000 24c0 3.87.93 7.52 2.56 10.78l7.54-5.86z" />
+                <path fill="#34A853" d="M24 48c5.97 0 11.13-1.97 14.84-5.37l-7.27-5.65c-2.02 1.35-4.6 2.15-7.57 2.15-6.45 0-11.97-3.59-13.9-8.58l-7.54 5.86C6.51 42.62 14.62 48 24 48z" />
+            </svg>
+
+            <span>التسجيل باستخدام Google</span>
+        </button>
+    </form>
+
 
     <div class="mt-8 pt-6 border-t border-gray-100 text-center">
         <p class="text-gray-500 text-sm font-bold">
@@ -73,6 +92,9 @@
         </p>
     </div>
 </div>
+    </div>
+</div>
+
 
 @section Scripts {
     @{

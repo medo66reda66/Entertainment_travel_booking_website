@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Chat\Controllers\" />
+    <Folder Include="Migrations\" />
     <Folder Include="wwwroot\images\trip-sup\" />
     <Folder Include="wwwroot\images\trips\" />
   </ItemGroup>

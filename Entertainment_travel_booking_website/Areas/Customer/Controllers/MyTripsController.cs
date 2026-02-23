@@ -90,15 +90,9 @@ $@"
 
         return View(); 
     }
-    public async Task<IActionResult> cancel(int id)
+    public async Task<IActionResult> cancel()
     {
-        var trip = await _tripGenericRepo.GetOneAsync(t => t.Id == id);
-       if (trip == null)
-        {
-            return NotFound();
-        }
-
-        return View(trip);
+        return View();
     }
     public async Task<IActionResult> Index()
     {
@@ -107,7 +101,7 @@ $@"
         var orders = await _context.Orders
             .Include(o => o.OrderItems)
             .ThenInclude(i => i.Trip.Hotel)
-            .Where(o => o.UserId == user.Id)
+            .Where(o => o.UserId == user.Id).OrderByDescending(e=>e.Id)
             .ToListAsync();
 
         return View(orders);

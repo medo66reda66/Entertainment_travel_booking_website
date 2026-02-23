@@ -146,6 +146,7 @@ namespace Entertainment_travel_booking_website.Areas.Admin.Controllers
                 Name = hotel.Name,
                 Location = hotel.Location,
                 Description = hotel.Description,
+                PricePerNight =(decimal) hotel.PricePerNight,
                 Status = hotel.Availability,
                 ExistingMainImage = hotel.Image,
                 ExistingSupImages = hotel.HotelSupImgs
